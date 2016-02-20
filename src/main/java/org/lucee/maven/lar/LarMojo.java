@@ -1,8 +1,13 @@
 package org.lucee.maven.lar;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -10,11 +15,8 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-
-import javax.script.*;
 
 @Mojo(
 	 name			= "lar"
@@ -68,14 +70,23 @@ public class LarMojo extends AbstractMojo {
     	System.getProperties().put("lucee.server.dir", luceeServerDirectory);
     	System.getProperties().put("lucee.web.dir", luceeWebDirectory);
     	
-		ScriptEngineManager manager = new ScriptEngineManager();
+    	PrintStream devnull = new PrintStream(new ByteArrayOutputStream());
+    	PrintStream out = System.out;
+    	PrintStream err = System.err;
+    	System.setOut(devnull);
+    	System.setErr(devnull);
+    	
+    	out.print("Initializing Lucee execution environment...");
+    	ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName("Lucee");
+		out.println("done.");
 		
 		if (engine == null) {
 			throw new MojoExecutionException("Missing plugin dependency for Lucee");
 		}
 		
 		try {
+			out.print("Packaging Lucee Archive...");
 			engine.eval(  "try{admin	action=\"updatePassword\" type=\"web\" newPassword=\"password\";}catch(any e){/*password already set*/}"
 					
 						+ "admin	action=\""+(archiveType.equalsIgnoreCase("component") ? "updateComponentMapping":"updateMapping")+"\""
@@ -104,11 +115,12 @@ public class LarMojo extends AbstractMojo {
 						+ "			;"
 						
 						);
-			// admin add mapping for sourceDir
-			// admin package mapping and create lar
-			// admin delete mapping
+			out.println("done.");
 		} catch (ScriptException e) {
 			throw new MojoExecutionException("Error", e);
+		} finally {
+	    	System.setOut(out);
+	    	System.setErr(err);
 		}
 	}
 	
