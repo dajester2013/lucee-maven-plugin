@@ -14,7 +14,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @author jesse.shafferz
  */
 @Mojo(name="initialize-lar")
-public class InitializerMojo extends AbstractMojo {
+public class LarInitializerMojo extends AbstractMojo {
 
 	/**
 	 * The source directories containing the sources to be compiled.

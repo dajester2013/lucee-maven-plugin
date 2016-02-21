@@ -22,7 +22,7 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 
 @Mojo(name = "lar-sources")
-public class SourcesMojo extends AbstractMojo {
+public class LarSourcesMojo extends AbstractMojo {
 
 	/**
 	 * The source directories containing the sources to be compiled.
@@ -52,18 +52,15 @@ public class SourcesMojo extends AbstractMojo {
 	private Set<String> excludes = new HashSet<String>();
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-
-		Set<File> luceeSources = new HashSet<File>();
-
-		includes.add("**/*");
+		includes.add("**/*.cfm");
+		includes.add("**/*.cfml");
+		includes.add("**/*.cfc");
+		includes.add("**/*.lucee");
+		includes.add("**/*.lc");
 
 		SourceInclusionScanner scanner = new SimpleSourceInclusionScanner(includes, excludes);
 
-		scanner.addSourceMapping(new SuffixMapping("cfm", "cfm"));
-		scanner.addSourceMapping(new SuffixMapping("cfml", "cfml"));
-		scanner.addSourceMapping(new SuffixMapping("cfc", "cfc"));
-		scanner.addSourceMapping(new SuffixMapping("lucee", "lucee"));
-		scanner.addSourceMapping(new SuffixMapping("lc", "lc"));
+		scanner.addSourceMapping(new SuffixMapping("",""));
 
 		InputStream is=null;
 		OutputStream os=null;
