@@ -21,14 +21,8 @@ import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 
-@Mojo(name = "lar-sources")
-public class LarSourcesMojo extends AbstractMojo {
-
-	/**
-	 * The source directories containing the sources to be compiled.
-	 */
-	@Parameter(defaultValue = "${project.compileSourceRoots}", readonly = true, required = true)
-	private List<String> compileSourceRoots;
+@Mojo(name = "lar-copy-sources")
+public class LarCopySourcesMojo extends AbstractMojo {
 
 	/**
 	 * The source directories containing the sources to be compiled.
@@ -64,37 +58,37 @@ public class LarSourcesMojo extends AbstractMojo {
 
 		InputStream is=null;
 		OutputStream os=null;
-		for (String root : compileSourceRoots) {
-			try {
-				File rootFile = new File(root);
-				if (rootFile.isDirectory()) {
-					for (File source : scanner.getIncludedSources(rootFile, null)) {
-						if (!source.getParentFile().equals(root)) {
-							new File(source.getParent().replace(root, outputDirectory)).mkdirs();
-						}
-						
-						try {
-							is = new FileInputStream(source);
-							os = new FileOutputStream(new File(source.getAbsolutePath().replace(root, outputDirectory)));
-							byte[] buffer = new byte[1024];
-					        int length;
-					        while ((length = is.read(buffer)) > 0) {
-					            os.write(buffer, 0, length);
-					        }
-					    } finally {
-						    is.close();
-					        os.close();
-						}
+		try {
+			File rootFile = new File(sourceDir);
+			sourceDir = rootFile.getAbsolutePath();
+			
+			if (rootFile.isDirectory()) {
+				for (File source : scanner.getIncludedSources(rootFile, null)) {
+					if (!source.getParentFile().equals(sourceDir)) {
+						new File(source.getParent().replace(sourceDir, outputDirectory)).mkdirs();
+					}
+					
+					try {
+						is = new FileInputStream(source);
+						os = new FileOutputStream(new File(source.getAbsolutePath().replace(sourceDir, outputDirectory)));
+						byte[] buffer = new byte[1024];
+				        int length;
+				        while ((length = is.read(buffer)) > 0) {
+				            os.write(buffer, 0, length);
+				        }
+				    } finally {
+					    is.close();
+				        os.close();
 					}
 				}
-			} catch (InclusionScanException e) {
-				throw new MojoExecutionException("Error scanning source root: \'" + root + "\'.", e);
-			} catch (FileNotFoundException e) {
-				throw new MojoExecutionException("Error writing file.", e);
-			} catch (IOException e) {
-				throw new MojoExecutionException("Error in IO.", e);
-			} 
-		}
+			}
+		} catch (InclusionScanException e) {
+			throw new MojoExecutionException("Error scanning source root: \'" + sourceDir + "\'.", e);
+		} catch (FileNotFoundException e) {
+			throw new MojoExecutionException("Error writing file.", e);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error in IO.", e);
+		} 
 	}
 
 }

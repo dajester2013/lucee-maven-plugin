@@ -12,14 +12,8 @@
 					<lifecycle>
 						<id>default</id>
 						<phases>
-							<initialize>
-								${project.groupId}:${project.artifactId}:${project.version}:initialize-lar
-							</initialize>
-							<process-resources>
-								org.apache.maven.plugins:maven-resources-plugin:resources,
-								${project.groupId}:${project.artifactId}:${project.version}:lar-sources
-							</process-resources>
-							<!-- <compile>${project.groupId}:${project.artifactId}:${project.version}:compile</compile> -->
+							<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+							<compile>${project.groupId}:${project.artifactId}:${project.version}:lar-copy-sources</compile>
 							<process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
 							<!-- <test-compile>${project.groupId}:${project.artifactId}:${project.version}:testCompile</test-compile> -->
 							<test>org.apache.maven.plugins:maven-surefire-plugin:test</test>
