@@ -2,7 +2,7 @@ package org.lucee.maven.lex.config;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
-public class CacheHandlerConfig {
+public class CacheHandlerConfig implements Config {
 	
 	@Parameter(required=true)
 	private String id;
@@ -15,5 +15,20 @@ public class CacheHandlerConfig {
 	
 	@Parameter
 	private String bundleVersion=null;
+
+	public String serializeJSON() {
+		return		"{"
+				+	 "\"id\":\"" + id + "\""
+				+ 	",\"className\":\""+className+"\""
+				
+				+ (
+					bundleName != null 
+						?		",\"bundle-name\":\""+className+"\""
+							+	",\"bundleName\":\""+className+"\""
+						:	""
+				)
+				+	"}"
+				;
+	}
 
 }

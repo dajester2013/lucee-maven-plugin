@@ -2,6 +2,6 @@ package org.lucee.maven.lex.packaging;
 
 public interface PackagingTask {
 	
-	public void doPackaging(PackagingContext context);
+	public void doPackaging(PackagingContext context) throws Exception;
 	
 }

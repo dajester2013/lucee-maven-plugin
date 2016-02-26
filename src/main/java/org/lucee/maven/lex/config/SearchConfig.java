@@ -2,7 +2,7 @@ package org.lucee.maven.lex.config;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
-public class SearchConfig {
+public class SearchConfig implements Config {
 	
 	@Parameter(required=true)
 	private String className;
@@ -12,5 +12,19 @@ public class SearchConfig {
 	
 	@Parameter
 	private String bundleVersion=null;
+
+	public String serializeJSON() {
+		return		"{"
+				+	 "\"className\":\""+className+"\""
+				
+				+ (
+					bundleName != null 
+						?		",\"bundle-name\":\""+className+"\""
+							+	",\"bundleName\":\""+className+"\""
+						:	""
+				)
+				+	"}"
+				;
+	}
 
 }

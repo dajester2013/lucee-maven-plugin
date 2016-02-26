@@ -2,7 +2,7 @@ package org.lucee.maven.lex.config;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
-public class JdbcConfig {
+public class JdbcConfig implements Config {
 	
 	@Parameter(required=true)
 	private String label;
@@ -15,5 +15,20 @@ public class JdbcConfig {
 	
 	@Parameter
 	private String bundleVersion=null;
+
+	public String serializeJSON() {
+		return		"{"
+				+	 "\"label\":\"" + label + "\""
+				+ 	",\"className\":\""+className+"\""
+				
+				+ (
+					bundleName != null 
+						?		",\"bundle-name\":\""+className+"\""
+							+	",\"bundleName\":\""+className+"\""
+						:	""
+				)
+				+	"}"
+				;
+	}
 
 }

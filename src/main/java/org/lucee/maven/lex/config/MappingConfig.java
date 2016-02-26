@@ -2,7 +2,7 @@ package org.lucee.maven.lex.config;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
-public class MappingConfig {
+public class MappingConfig implements Config {
 	private enum InspectTemplate {
 		always,never,once;
 	}
@@ -32,4 +32,21 @@ public class MappingConfig {
 	private boolean topLevel;
 	@Parameter
 	private boolean readOnly;
+	
+
+	public String serializeJSON() {
+		return		"{"
+				+	 "\"virtual\":\"" + virtual + "\""
+				+ 	",\"physical\":\""+physical+"\""
+				+ 	",\"archive\":\""+archive+"\""
+				+ 	",\"primary\":\""+primary+"\""
+				+ 	",\"inspect\":\""+inspect.name()+"\""
+				+ 	",\"listener-mode\":\""+listenerMode.name()+"\""
+				+ 	",\"listener-type\":\""+listenerType.name()+"\""
+				+ 	",\"top-level\":\""+String.valueOf(topLevel)+"\""
+				+ 	",\"read-only\":\""+String.valueOf(readOnly)+"\""
+				+	"}"
+				;
+	}
+
 }

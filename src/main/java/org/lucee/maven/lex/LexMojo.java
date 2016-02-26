@@ -1,5 +1,6 @@
 package org.lucee.maven.lex;
 
+import java.io.File;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,44 +16,36 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.lucee.maven.lex.config.AMFConfig;
 import org.lucee.maven.lex.config.CacheHandlerConfig;
+import org.lucee.maven.lex.config.Config;
 import org.lucee.maven.lex.config.JdbcConfig;
 import org.lucee.maven.lex.config.MappingConfig;
 import org.lucee.maven.lex.config.MonitorConfig;
 import org.lucee.maven.lex.config.ORMConfig;
 import org.lucee.maven.lex.config.ResourceProviderConfig;
 import org.lucee.maven.lex.config.SearchConfig;
+import org.lucee.maven.lex.packaging.ArchiveTask;
+import org.lucee.maven.lex.packaging.CopyDependenciesTask;
+import org.lucee.maven.lex.packaging.ManifestTask;
+import org.lucee.maven.lex.packaging.PackagingContext;
+import org.lucee.maven.lex.packaging.PackagingTask;
+import org.lucee.maven.lex.packaging.NoDepsPomTask;
 
-@Mojo(name = "lex", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.RUNTIME)
+@Mojo(name = "lex", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.RUNTIME, requiresDependencyResolution=ResolutionScope.RUNTIME)
 public class LexMojo extends AbstractMojo {
 
-	private static enum InstallTarget {
-		 all,server,web;
-	}
-
-	private static final String META_INF = "META-INF";
-
-	private static final String FLDS = "flds";
-	private static final String TLDS = "tlds";
-	private static final String TAGS = "tags";
-	private static final String FUNCTIONS = "functions";
-	private static final String EVENTGATEWAYS = "eventGateways";
-	private static final String CONTEXT = "context";
-	private static final String WEBCONTEXTS = "webcontexts";
-	private static final String APPLICATIONS = "applications";
-	private static final String PLUGINS = "plugins";
-	private static final String JARS = "jars";
-	private static final String ARCHIVES = "archives";
-
+	@Parameter(defaultValue="${project.build.directory}/extension")
+	private String outputDirectory;
+	
 	@Parameter
 	private String id = null;
 
 	@Parameter(defaultValue = "${project.version}", readonly = true, required = true)
 	private String version;
 
-	@Parameter(defaultValue = "${project.name}", readonly = true, required = true)
+	@Parameter(defaultValue = "${project.name}", readonly = true)
 	private String name;
 
-	@Parameter(defaultValue = "${project.description}", readonly = true, required = true)
+	@Parameter(defaultValue = "${project.description}", readonly = true)
 	private String description;
 
 	@Parameter
@@ -92,6 +85,8 @@ public class LexMojo extends AbstractMojo {
 	@Parameter
 	private List<JdbcConfig> 				jdbcConfig			= new ArrayList<JdbcConfig>();
 
+	private List<PackagingTask> packagingTasks = new ArrayList<PackagingTask>();
+	
 	/**
 	 * The Maven project.
 	 */
@@ -102,9 +97,15 @@ public class LexMojo extends AbstractMojo {
 		if (id == null) {
 			generateId();
 		}
+		
+		preparePackagingTasks();
+		
+		try {
+			runPackagingTasks();
+		} catch (Exception e) {
+			throw new MojoExecutionException("Unexpected error", e);
+		}
 	}
-	
-	
 	
 	
 	private void generateId() throws MojoExecutionException {
@@ -124,10 +125,44 @@ public class LexMojo extends AbstractMojo {
 				idBuilder.append(c);
 			}
 			
-			id = idBuilder.toString();
+			id = idBuilder.toString().toUpperCase();
 		} catch(Exception e) {
 			throw new MojoExecutionException("Failed to generate ID", e);
 		}
 	}
 
+	
+	private void preparePackagingTasks() {
+		
+		packagingTasks.add(new CopyDependenciesTask());
+		
+		packagingTasks.add(new ManifestTask(
+				id
+				,version
+				,name
+				,description
+				,categories
+				,installTarget
+				,trial
+				,luceeCoreVersion
+				,luceeLoaderVersion
+				,startBundles
+				,cacheHandlers
+				,ormEngines
+				, monitors			,searchEngines
+				,resourceProviders	,amfs
+				,jdbcDrivers			,mappings
+				,jdbcConfig));
+		
+		packagingTasks.add(new ArchiveTask());
+		packagingTasks.add(new NoDepsPomTask());
+	}
+	
+	private void runPackagingTasks() throws Exception {
+		PackagingContext context = new PackagingContext(project, new File(outputDirectory), installTarget);
+
+		for (PackagingTask task : packagingTasks) {
+			task.doPackaging(context);
+		}
+	}
 }

@@ -54,10 +54,8 @@ public class LarMojo extends AbstractMojo {
 	@Parameter(defaultValue="${project.build.directory}", required=true)
 	private String targetPath;
 	
-	@Parameter(defaultValue="${project.build.finalName}.lar", required=true)
+	@Parameter(defaultValue="${project.build.finalName}", required=true)
 	private String outputFileName;
-	
-	
 	
 	@Parameter(defaultValue="${project}", readonly=true, required=true)
 	private MavenProject project;
@@ -89,33 +87,34 @@ public class LarMojo extends AbstractMojo {
 			out.print("Packaging Lucee Archive...");
 			engine.eval(  "try{admin	action=\"updatePassword\" type=\"web\" newPassword=\"password\";}catch(any e){/*password already set*/}"
 					
-						+ "admin	action=\""+(archiveType.equalsIgnoreCase("component") ? "updateComponentMapping":"updateMapping")+"\""
+						+ "admin	action=\"" + (archiveType.equalsIgnoreCase("component") ? "updateComponentMapping" : "updateMapping") + "\""
 						+ "			type=\"web\""
-						+ "			physical=\""+sourceDir+"\""
+						+ "			physical=\"" + sourceDir + "\""
 						+ "			archive=\"\""
-						+ "			virtual=\"/"+project.getArtifactId()+"-"+project.getVersion()+"\""
+						+ "			virtual=\"/" + project.getArtifactId() + "-" + project.getVersion() + "\""
 						+ "			password=\"password\""
 						+ "			primary=\"physical\""
 						+ "			;"
 						
-						+ "admin	action=\""+(archiveType.equalsIgnoreCase("component") ? "createComponentArchive":"createArchive")+"\""
+						+ "admin	action=\"" + (archiveType.equalsIgnoreCase("component") ? "createComponentArchive" : "createArchive") + "\""
 						+ "			type=\"web\""
-						+ "			virtual=\"/"+project.getArtifactId()+"-"+project.getVersion()+"\""
+						+ "			virtual=\"/" + project.getArtifactId() + "-" + project.getVersion() + "\""
 						+ "			password=\"password\""
-						+ "			file=\""+targetPath + "/" + outputFileName+"\""
+						+ "			file=\""+targetPath + "/" + outputFileName + (classifier != null ? "-" + classifier : "") + "\""
 						+ "			addCFMLFiles=" + (includeSourceFiles ? "true" : "false")
 						+ "			addNonCFMLFiles=" + (includeStaticFiles ? "true" : "false")
 						+ "			append=false"
 						+ "			;"
 
-						+ "admin	action=\""+(archiveType.equalsIgnoreCase("component") ? "removeComponentMapping":"removeMapping")+"\""
+						+ "admin	action=\"" + (archiveType.equalsIgnoreCase("component") ? "removeComponentMapping" : "removeMapping") + "\""
 						+ "			type=\"web\""
-						+ "			virtual=\"/"+project.getArtifactId()+"-"+project.getVersion()+"\""
+						+ "			virtual=\"/" + project.getArtifactId() + "-" + project.getVersion() + "\""
 						+ "			password=\"password\""
 						+ "			;"
 						
 						);
 			out.println("done.");
+			
 		} catch (ScriptException e) {
 			throw new MojoExecutionException("Error", e);
 		} finally {

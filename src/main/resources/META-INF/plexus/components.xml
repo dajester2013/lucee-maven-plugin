@@ -44,7 +44,7 @@
 
 
 		<!-- LEX -->
-		<!-- <component>
+		<component>
 			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
 			<role-hint>lex</role-hint>
 			<implementation>
@@ -52,20 +52,16 @@
 			</implementation>
 			<configuration>
 				<phases>
-					use the basic jar lifecycle bindings, add additional executions 
-						in here if you want anything extra to be run
+					<!-- use the basic jar lifecycle bindings, add additional executions 
+						in here if you want anything extra to be run -->
 					<process-resources>
+						${project.groupId}:${project.artifactId}:${project.version}:lex-config-resources,
 						org.apache.maven.plugins:maven-resources-plugin:resources
 					</process-resources>
-					<package>
-						org.apache.maven.plugins:maven-jar-plugin:jar
-					</package>
-					<install>
-						org.apache.maven.plugins:maven-install-plugin:install
-					</install>
-					<deploy>
-						org.apache.maven.plugins:maven-deploy-plugin:deploy
-					</deploy>
+					<compile></compile>
+					<package>${project.groupId}:${project.artifactId}:${project.version}:lex</package>
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>
 			</configuration>
 		</component>
@@ -84,6 +80,6 @@
 				the packaging used when declaring an implementation of the packaging
 				<packaging>lex</packaging>
 			</configuration>
-		</component> -->
+		</component>
 	</components>
 </component-set>
