@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -16,7 +18,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.lucee.maven.lex.config.AMFConfig;
 import org.lucee.maven.lex.config.CacheHandlerConfig;
-import org.lucee.maven.lex.config.Config;
+import org.lucee.maven.lex.config.EventGatewayConfig;
 import org.lucee.maven.lex.config.JdbcConfig;
 import org.lucee.maven.lex.config.MappingConfig;
 import org.lucee.maven.lex.config.MonitorConfig;
@@ -25,16 +27,18 @@ import org.lucee.maven.lex.config.ResourceProviderConfig;
 import org.lucee.maven.lex.config.SearchConfig;
 import org.lucee.maven.lex.packaging.ArchiveTask;
 import org.lucee.maven.lex.packaging.CopyDependenciesTask;
-import org.lucee.maven.lex.packaging.ManifestTask;
+import org.lucee.maven.lex.packaging.NoDepsPomTask;
 import org.lucee.maven.lex.packaging.PackagingContext;
 import org.lucee.maven.lex.packaging.PackagingTask;
-import org.lucee.maven.lex.packaging.NoDepsPomTask;
 
 @Mojo(name = "lex", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.RUNTIME, requiresDependencyResolution=ResolutionScope.RUNTIME)
 public class LexMojo extends AbstractMojo {
 
 	@Parameter(defaultValue="${project.build.directory}/extension")
 	private String outputDirectory;
+	
+	@Parameter
+	private String classifier;
 	
 	@Parameter
 	private String id = null;
@@ -55,7 +59,7 @@ public class LexMojo extends AbstractMojo {
 	private InstallTarget installTarget; // for release type
 	
 	@Parameter(defaultValue="false")
-	private boolean trial;
+	private Boolean trial;
 
 	@Parameter
 	private String luceeCoreVersion = null;
@@ -64,34 +68,53 @@ public class LexMojo extends AbstractMojo {
 	private String luceeLoaderVersion = null;
 
 	@Parameter(defaultValue = "false")
-	private boolean startBundles;
+	private Boolean startBundles;
 
 	@Parameter
-	private List<CacheHandlerConfig> 		cacheHandlers		= new ArrayList<CacheHandlerConfig>();
+	private List<AMFConfig> 				amfs				= new ArrayList<AMFConfig>();
+	@Parameter
+	private List<ResourceProviderConfig> 	resourceProviders	= new ArrayList<ResourceProviderConfig>();
+	@Parameter
+	private List<SearchConfig> 				searchEngines	 	= new ArrayList<SearchConfig>();
 	@Parameter
 	private List<ORMConfig> 				ormEngines			= new ArrayList<ORMConfig>();
 	@Parameter
 	private List<MonitorConfig> 			monitors			= new ArrayList<MonitorConfig>();
 	@Parameter
-	private List<SearchConfig> 				searchEngines	 	= new ArrayList<SearchConfig>();
-	@Parameter
-	private List<ResourceProviderConfig> 	resourceProviders	= new ArrayList<ResourceProviderConfig>();
-	@Parameter
-	private List<AMFConfig> 				amfs				= new ArrayList<AMFConfig>();
+	private List<CacheHandlerConfig> 		cacheHandlers		= new ArrayList<CacheHandlerConfig>();
 	@Parameter
 	private List<JdbcConfig> 				jdbcDrivers			= new ArrayList<JdbcConfig>();
 	@Parameter
-	private List<MappingConfig> 			mappings			= new ArrayList<MappingConfig>();
+	private List<EventGatewayConfig> 		eventGateways		= new ArrayList<EventGatewayConfig>();
 	@Parameter
-	private List<JdbcConfig> 				jdbcConfig			= new ArrayList<JdbcConfig>();
+	private List<MappingConfig> 			mappings			= new ArrayList<MappingConfig>();
+	
+
+	@Parameter(defaultValue="src/main/jars")
+	private File jarsDir;
+	@Parameter(defaultValue="src/main/lars")
+	private File archivesDir;
 
 	private List<PackagingTask> packagingTasks = new ArrayList<PackagingTask>();
 	
 	/**
-	 * The Maven project.
+	 * The {@link MavenProject}.
 	 */
 	@Parameter(defaultValue = "${project}", readonly = true, required = true)
 	private MavenProject project;
+
+    /**
+     * The {@link MavenSession}.
+     */
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    private MavenSession session;
+    
+    
+    /**
+     * Configuration for the archive. {@link MavenArchiveConfiguration}
+     */
+    @Parameter
+    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (id == null) {
@@ -136,30 +159,30 @@ public class LexMojo extends AbstractMojo {
 		
 		packagingTasks.add(new CopyDependenciesTask());
 		
-		packagingTasks.add(new ManifestTask(
-				id
-				,version
-				,name
-				,description
-				,categories
-				,installTarget
-				,trial
-				,luceeCoreVersion
-				,luceeLoaderVersion
-				,startBundles
-				,cacheHandlers
-				,ormEngines
-				, monitors			,searchEngines
-				,resourceProviders	,amfs
+		packagingTasks.add(
+			new ArchiveTask(
+				 archive
+				,classifier
+				
+				,id						,version
+				,name					,description
+				,categories				,installTarget
+				,trial					,luceeCoreVersion
+				,luceeLoaderVersion		,startBundles
+				
+				,cacheHandlers			,ormEngines
+				,monitors				,searchEngines
+				,resourceProviders		,amfs
 				,jdbcDrivers			,mappings
-				,jdbcConfig));
+				,eventGateways
+			)	
+		);
 		
-		packagingTasks.add(new ArchiveTask());
 		packagingTasks.add(new NoDepsPomTask());
 	}
 	
 	private void runPackagingTasks() throws Exception {
-		PackagingContext context = new PackagingContext(project, new File(outputDirectory), installTarget);
+		PackagingContext context = new PackagingContext(project, session, new File(outputDirectory), installTarget);
 
 		for (PackagingTask task : packagingTasks) {
 			task.doPackaging(context);

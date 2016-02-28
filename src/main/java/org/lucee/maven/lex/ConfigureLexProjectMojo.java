@@ -11,8 +11,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-@Mojo(name="lex-config-resources", threadSafe=true)
-public class ConfigureResourcesMojo extends AbstractMojo {
+@Mojo(name="lex-config-project", threadSafe=true)
+public class ConfigureLexProjectMojo extends AbstractMojo {
 	/**
 	 * The list of resources we want to transfer.
 	 */
@@ -52,7 +52,7 @@ public class ConfigureResourcesMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		Resource r;
 		
-		project.getProperties().setProperty("$lucee.lex.extensions.outputdir", outputDirectory);
+		project.getBuild().setOutputDirectory(outputDirectory);
 		
 		if (new File(fldsDir).exists()) {
 			r = new Resource();

@@ -6,22 +6,20 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.FileUtils;
+import org.lucee.maven.lex.Constants;
 
 public class CopyDependenciesTask implements PackagingTask {
 
-	private static String LAR_DIR = "archives";
-	private static String JAR_DIR = "jars";
-	
 	public void doPackaging(PackagingContext context) throws Exception {
-		File larsDir = new File(context.getOutputDirectory(), LAR_DIR);
-		File jarsDir = new File(context.getOutputDirectory(), JAR_DIR);
-
+		File larsDir = new File(context.getOutputDirectory(), Constants.DIR_ARCHIVES);
+		File jarsDir = new File(context.getOutputDirectory(), Constants.DIR_JARS);
+		
 		Artifact a;
 		for (Object aObj : context.getArtifacts()) {
+			
 			if (aObj instanceof Artifact) {
-				
 				a = (Artifact)aObj;
-
+		
 				if (a.getType().equals("lar"))
 					FileUtils.copyFileToDirectory(a.getFile(), larsDir);
 				else if (a.getType().equals("jar"))
