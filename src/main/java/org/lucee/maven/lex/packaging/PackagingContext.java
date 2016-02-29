@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
-import org.lucee.maven.lex.InstallTarget;
+import org.lucee.maven.lex.ExtensionType;
 
 public class PackagingContext {
 	
@@ -13,9 +13,9 @@ public class PackagingContext {
 	private final MavenSession session;
 
 	private final File outputDirectory;
-	private final InstallTarget installTarget;
+	private final ExtensionType installTarget;
 	
-	public PackagingContext(MavenProject project, MavenSession session, File outputDirectory, InstallTarget installTarget) {
+	public PackagingContext(MavenProject project, MavenSession session, File outputDirectory, ExtensionType installTarget) {
 		
 		this.project = project;
 		this.session = session;
@@ -28,6 +28,6 @@ public class PackagingContext {
 	public MavenSession getSession() {return session;}
 	public Set<?> getArtifacts() {return project.getArtifacts();}
 	public File getOutputDirectory() {return outputDirectory;}
-	public InstallTarget getInstallTarget() {return installTarget;}
+	public ExtensionType getInstallTarget() {return installTarget;}
 	
 }

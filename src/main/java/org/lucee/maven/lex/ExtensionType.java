@@ -1,5 +1,5 @@
 package org.lucee.maven.lex;
 
-public enum InstallTarget {
+public enum ExtensionType {
 	all,server,web;
 }

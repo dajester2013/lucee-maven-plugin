@@ -2,7 +2,7 @@ package org.lucee.maven.lex.config;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
-public class JdbcConfig implements Config {
+public class JdbcDriverConfig implements Config {
 	
 	@Parameter(required=true)
 	private String label;

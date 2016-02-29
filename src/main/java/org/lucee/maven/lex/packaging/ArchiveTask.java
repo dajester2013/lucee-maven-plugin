@@ -9,7 +9,7 @@ import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.lucee.maven.lex.InstallTarget;
+import org.lucee.maven.lex.ExtensionType;
 import org.lucee.maven.lex.config.Config;
 
 public class ArchiveTask implements PackagingTask {
@@ -42,6 +42,8 @@ public class ArchiveTask implements PackagingTask {
     private static final String MF_KEY_EVENTGATEWAYS		= "event-handlers";
 
     
+    private File outputDirectory;
+    
 	private MavenArchiveConfiguration archiveConfig;
 	private String classifier;
 	
@@ -50,7 +52,7 @@ public class ArchiveTask implements PackagingTask {
 	private String name;
 	private String description;
 	private List<String> categories;
-	private InstallTarget installTarget; // for release type
+	private ExtensionType installTarget; // for release type
 	private Boolean trial;
 	private String luceeCoreVersion;
 	private String luceeLoaderVersion;
@@ -68,11 +70,12 @@ public class ArchiveTask implements PackagingTask {
 
 	
 	public ArchiveTask(
-			 MavenArchiveConfiguration archiveConfig
+			 File outputDirectory
+			,MavenArchiveConfiguration archiveConfig
 			,String classifier 
 			
 			,String id, String version, String name,String description
-			,List<String> categories, InstallTarget installTarget,Boolean trial
+			,List<String> categories, ExtensionType installTarget,Boolean trial
 			,String luceeCoreVersion, String luceeLoaderVersion ,Boolean startBundles
 			,List<? extends Config> cacheHandlers		,List<? extends Config> ormEngines
 			,List<? extends Config>  monitors			,List<? extends Config> searchEngines
@@ -113,13 +116,11 @@ public class ArchiveTask implements PackagingTask {
 		archiver.setArchiver(jarArchiver);
 		archiver.setOutputFile(jarFile);
 		
-		Map<String, String> manifestEntries = archiveConfig.getManifestEntries();
-		
 		if (id == null) throw new MojoExecutionException("No extension ID provided."); // id is generated if one is not set, so this should never happen!
 		if (version == null) throw new MojoExecutionException("No extension version set."); // version is gathered from the pom, so this should never happen!
 		
 		if (name == null) name = context.getProject().getArtifactId();
-		if (installTarget == null) installTarget = InstallTarget.all;
+		if (installTarget == null) installTarget = ExtensionType.all;
 		
 		
 		archiveConfig.getManifest().setMainClass(null);
@@ -205,7 +206,7 @@ public class ArchiveTask implements PackagingTask {
 		fileName.append('.')
 				.append(ARCHIVE_FILE_EXTENSION);
 		
-		return new File(project.getBuild().getDirectory(), fileName.toString());
+		return new File(outputDirectory, fileName.toString());
 	}
 
 }

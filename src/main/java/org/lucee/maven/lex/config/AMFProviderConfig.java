@@ -2,7 +2,7 @@ package org.lucee.maven.lex.config;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
-public class AMFConfig implements Config {
+public class AMFProviderConfig implements Config {
 	
 	@Parameter(required=true)
 	private String caster;

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -12,7 +11,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 @Mojo(name="lex-config-project", threadSafe=true)
-public class ConfigureLexProjectMojo extends AbstractMojo {
+public class ConfigureLexProjectMojo extends AbstractLexMojo {
 	/**
 	 * The list of resources we want to transfer.
 	 */
@@ -20,117 +19,94 @@ public class ConfigureLexProjectMojo extends AbstractMojo {
 	private List<Resource> resources;
 
 	@Parameter(defaultValue="${project.build.directory}/extension")
-	private String outputDirectory;
+	private String extensionDirectory;
 
 	@Parameter(defaultValue="src/main/flds")
-	private String fldsDir;
+	private String fldsSourceDir;
 	@Parameter(defaultValue="src/main/tlds")
-	private String tldsDir;
+	private String tldsSourceDir;
 	@Parameter(defaultValue="src/main/tags")
-	private String tagsDir;
+	private String tagsSourceDir;
 	@Parameter(defaultValue="src/main/functions")
-	private String functionsDir;
+	private String functionsSourceDir;
 	@Parameter(defaultValue="src/main/eventGateways")
-	private String eventGatewaysDir;
+	private String eventGatewaysSourceDir;
 	@Parameter(defaultValue="src/main/context")
-	private String contextDir;
+	private String contextSourceDir;
 	@Parameter(defaultValue="src/main/app")
-	private String appDir;
+	private String appSourceDir;
 	@Parameter(defaultValue="src/main/plugins")
-	private String pluginsDir;
-	@Parameter(defaultValue="src/main/jars")
-	private String jarsDir;
-	@Parameter(defaultValue="src/main/lars")
-	private String archivesDir;
+	private String pluginsSourceDir;
 
 	@Parameter(defaultValue="all")
-	private InstallTarget installTarget; // for release type
-
-	@Parameter(defaultValue="${project}", readonly=true)
-	private MavenProject project; // for release type
+	private ExtensionType installTarget; // for release type
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		Resource r;
 		
-		project.getBuild().setOutputDirectory(outputDirectory);
+		getProject().getBuild().setOutputDirectory(extensionDirectory);
 		
-		if (new File(fldsDir).exists()) {
+		if (new File(fldsSourceDir).exists()) {
 			r = new Resource();
-			r.setDirectory(fldsDir);
+			r.setDirectory(fldsSourceDir);
 			r.setFiltering(true);
-			r.setTargetPath(outputDirectory + "/" + Constants.DIR_FLDS);
+			r.setTargetPath(extensionDirectory + "/" + Constants.DIR_FLDS);
 			resources.add(r);
 		}
 
-		if (new File(tldsDir).exists()) {
+		if (new File(tldsSourceDir).exists()) {
 			r = new Resource();
-			r.setDirectory(tldsDir);
+			r.setDirectory(tldsSourceDir);
 			r.setFiltering(true);
-			r.setTargetPath(outputDirectory + "/" + Constants.DIR_TLDS);	   	
+			r.setTargetPath(extensionDirectory + "/" + Constants.DIR_TLDS);	   	
 			resources.add(r);
 		}
 		
-		if (new File(tagsDir).exists()) {
+		if (new File(tagsSourceDir).exists()) {
 			r = new Resource();
-			r.setDirectory(tagsDir);
+			r.setDirectory(tagsSourceDir);
 			r.setFiltering(true);
-			r.setTargetPath(outputDirectory + "/" + Constants.DIR_TAGS);
+			r.setTargetPath(extensionDirectory + "/" + Constants.DIR_TAGS);
 			resources.add(r);
 		}
 
-		if (new File(functionsDir).exists()) {
+		if (new File(functionsSourceDir).exists()) {
 			r = new Resource();
-			r.setDirectory(functionsDir);
+			r.setDirectory(functionsSourceDir);
 			r.setFiltering(true);
-			r.setTargetPath(outputDirectory + "/" + Constants.DIR_FUNCTIONS);
+			r.setTargetPath(extensionDirectory + "/" + Constants.DIR_FUNCTIONS);
 			resources.add(r);
 		}
 
-		if (new File(eventGatewaysDir).exists()) {
+		if (new File(eventGatewaysSourceDir).exists()) {
 			r = new Resource();
-			r.setDirectory(eventGatewaysDir);
+			r.setDirectory(eventGatewaysSourceDir);
 			r.setFiltering(true);
-			r.setTargetPath(outputDirectory + "/" + Constants.DIR_EVENTGATEWAYS);
+			r.setTargetPath(extensionDirectory + "/" + Constants.DIR_EVENTGATEWAYS);
 			resources.add(r);
 		}
 
-		if (new File(contextDir).exists()) {
+		if (new File(contextSourceDir).exists()) {
 			r = new Resource();
-			r.setDirectory(contextDir);
+			r.setDirectory(contextSourceDir);
 			r.setFiltering(true);
-			r.setTargetPath(outputDirectory + "/" + (installTarget == InstallTarget.web ? Constants.DIR_CONTEXT : Constants.DIR_WEBCONTEXTS));
+			r.setTargetPath(extensionDirectory + "/" + (installTarget == ExtensionType.web ? Constants.DIR_CONTEXT : Constants.DIR_WEBCONTEXTS));
 			resources.add(r);
 		}
 
-		if (new File(appDir).exists()) {
+		if (new File(appSourceDir).exists()) {
 			r = new Resource();
-			r.setDirectory(appDir);
+			r.setDirectory(appSourceDir);
 			r.setFiltering(true);
-			r.setTargetPath(outputDirectory + "/" + Constants.DIR_APPLICATIONS);
+			r.setTargetPath(extensionDirectory + "/" + Constants.DIR_APPLICATIONS);
 			resources.add(r);
 		}
 
-		if (new File(pluginsDir).exists()) {
+		if (new File(pluginsSourceDir).exists()) {
 			r = new Resource();
-			r.setDirectory(pluginsDir);
+			r.setDirectory(pluginsSourceDir);
 			r.setFiltering(true);
-			r.setTargetPath(outputDirectory + "/" + Constants.DIR_PLUGINS);
-			resources.add(r);
-		}
-
-		if (new File(jarsDir).exists()) {
-			r = new Resource();
-			r.setDirectory(jarsDir);
-			r.setFiltering(false);
-			r.setTargetPath(outputDirectory + "/" + Constants.DIR_JARS);
-			resources.add(r);
-		}
-
-		if (new File(archivesDir).exists()) {
-			r = new Resource();
-			r.setDirectory(archivesDir);
-			r.setFiltering(false);
-			r.setTargetPath(outputDirectory + "/" + Constants.DIR_ARCHIVES);
+			r.setTargetPath(extensionDirectory + "/" + Constants.DIR_PLUGINS);
 			resources.add(r);
 		}
 		

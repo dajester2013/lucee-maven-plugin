@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -16,10 +15,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.lucee.maven.lex.config.AMFConfig;
+import org.lucee.maven.lex.config.AMFProviderConfig;
 import org.lucee.maven.lex.config.CacheHandlerConfig;
 import org.lucee.maven.lex.config.EventGatewayConfig;
-import org.lucee.maven.lex.config.JdbcConfig;
+import org.lucee.maven.lex.config.JdbcDriverConfig;
 import org.lucee.maven.lex.config.MappingConfig;
 import org.lucee.maven.lex.config.MonitorConfig;
 import org.lucee.maven.lex.config.ORMConfig;
@@ -31,91 +30,141 @@ import org.lucee.maven.lex.packaging.NoDepsPomTask;
 import org.lucee.maven.lex.packaging.PackagingContext;
 import org.lucee.maven.lex.packaging.PackagingTask;
 
+/**
+ * Packaging task for Lucee Extensions.  Configure the plugin with extensions set to true, then use <b>lex</b> as the packaging type.
+ * 
+ * @author jesse.shaffer
+ *
+ */
 @Mojo(name = "lex", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.RUNTIME, requiresDependencyResolution=ResolutionScope.RUNTIME)
-public class LexMojo extends AbstractMojo {
+public class LexMojo extends AbstractLexMojo {
 
-	@Parameter(defaultValue="${project.build.directory}/extension")
-	private String outputDirectory;
-	
+	/**
+	 * Classifier to add to the artifact generated.
+	 */
 	@Parameter
 	private String classifier;
 	
+	
+	/**
+	 * ID to use for the extension.  This must be a valid CFML UUID, which is in the format of:
+	 * xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxxxxxx (note the missing 4th dash)
+	 * 
+	 * If one is not supplied one will be generated using an MD5 hash of the project's groupId + artifactId.
+	 */
 	@Parameter
 	private String id = null;
-
-	@Parameter(defaultValue = "${project.version}", readonly = true, required = true)
-	private String version;
-
-	@Parameter(defaultValue = "${project.name}", readonly = true)
-	private String name;
-
-	@Parameter(defaultValue = "${project.description}", readonly = true)
-	private String description;
-
+	
+	/**
+	 * A list of one or more categories for this extension.
+	 */
 	@Parameter
 	private List<String> categories;
 	
+	/**
+	 * What type of extension this is.  See {@link ExtensionType}.
+	 */
 	@Parameter(defaultValue="all")
-	private InstallTarget installTarget; // for release type
+	private ExtensionType extensionType; // for release type
 	
+	/**
+	 * Whether to flag the extension as a trial
+	 */
 	@Parameter(defaultValue="false")
 	private Boolean trial;
 
+	/**
+	 * Minimum required version of the Lucee core.
+	 */
 	@Parameter
 	private String luceeCoreVersion = null;
 
+	/**
+	 * Minimum required version of the Lucee loader.
+	 */
 	@Parameter
 	private String luceeLoaderVersion = null;
 
+	/**
+	 * Whether or not to immediately start any included OSGi bundles immediately.
+	 */
 	@Parameter(defaultValue = "false")
 	private Boolean startBundles;
 
+	/**
+	 * List of AMF providers that are made available by this extension. 
+	 * See {@link AMFProviderConfig}
+	 */
 	@Parameter
-	private List<AMFConfig> 				amfs				= new ArrayList<AMFConfig>();
-	@Parameter
-	private List<ResourceProviderConfig> 	resourceProviders	= new ArrayList<ResourceProviderConfig>();
-	@Parameter
-	private List<SearchConfig> 				searchEngines	 	= new ArrayList<SearchConfig>();
-	@Parameter
-	private List<ORMConfig> 				ormEngines			= new ArrayList<ORMConfig>();
-	@Parameter
-	private List<MonitorConfig> 			monitors			= new ArrayList<MonitorConfig>();
-	@Parameter
-	private List<CacheHandlerConfig> 		cacheHandlers		= new ArrayList<CacheHandlerConfig>();
-	@Parameter
-	private List<JdbcConfig> 				jdbcDrivers			= new ArrayList<JdbcConfig>();
-	@Parameter
-	private List<EventGatewayConfig> 		eventGateways		= new ArrayList<EventGatewayConfig>();
-	@Parameter
-	private List<MappingConfig> 			mappings			= new ArrayList<MappingConfig>();
-	
-
-	@Parameter(defaultValue="src/main/jars")
-	private File jarsDir;
-	@Parameter(defaultValue="src/main/lars")
-	private File archivesDir;
-
-	private List<PackagingTask> packagingTasks = new ArrayList<PackagingTask>();
+	private List<AMFProviderConfig> 		amfProviders		= new ArrayList<AMFProviderConfig>();
 	
 	/**
-	 * The {@link MavenProject}.
+	 * List of Resource providers that are made available by this extension.  These provide file schemes (such as ram:/// or s3:///).
+	 * See {@link ResourceProviderConfig}
 	 */
-	@Parameter(defaultValue = "${project}", readonly = true, required = true)
-	private MavenProject project;
+	@Parameter
+	private List<ResourceProviderConfig> 	resourceProviders	= new ArrayList<ResourceProviderConfig>();
+	
+	/**
+	 * List of search providers that are made available by this extension.
+	 * See {@link SearchConfig}
+	 */
+	@Parameter
+	private List<SearchConfig> 				searchEngines	 	= new ArrayList<SearchConfig>();
+	
+	/**
+	 * List of ORM engine providers that are made available by this extension.
+	 * See {@link ORMConfig}
+	 */
+	@Parameter
+	private List<ORMConfig> 				ormEngines			= new ArrayList<ORMConfig>();
+	
+	/**
+	 * List of Monitors that are made available by this extension.
+	 * See {@link MonitorConfig}
+	 */
+	@Parameter
+	private List<MonitorConfig> 			monitors			= new ArrayList<MonitorConfig>();
+	
+	/**
+	 * List of Cache Handlers that are made available by this extension.
+	 * See {@link CacheHandlerConfig}
+	 */
+	@Parameter
+	private List<CacheHandlerConfig> 		cacheHandlers		= new ArrayList<CacheHandlerConfig>();
+	
+	/**
+	 * List of JDBC Drivers that are made available by this extension.
+	 * See {@link JdbcDriverConfig}
+	 */
+	@Parameter
+	private List<JdbcDriverConfig> 			jdbcDrivers			= new ArrayList<JdbcDriverConfig>();
+	
+	/**
+	 * List of Java-based Event Gateways that are made available by this extension.
+	 * See {@link EventGatewayConfig}
+	 */
+	@Parameter
+	private List<EventGatewayConfig> 		eventGateways		= new ArrayList<EventGatewayConfig>();
+	
+	/**
+	 * List of mappings to create in the Lucee configuration, depending on the type of extension this is either server or web.
+	 * See {@link MappingConfig}
+	 */
+	@Parameter
+	private List<MappingConfig> 			mappings			= new ArrayList<MappingConfig>();
 
-    /**
-     * The {@link MavenSession}.
-     */
-    @Parameter( defaultValue = "${session}", readonly = true, required = true )
-    private MavenSession session;
-    
-    
     /**
      * Configuration for the archive. {@link MavenArchiveConfiguration}
      */
     @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
+    
+    private List<PackagingTask> packagingTasks = new ArrayList<PackagingTask>();
+	
+    
+    
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (id == null) {
 			generateId();
@@ -130,11 +179,14 @@ public class LexMojo extends AbstractMojo {
 		}
 	}
 	
-	
+	/**
+	 * generate a valid id from the project's groupId and artifactId
+	 * @throws MojoExecutionException
+	 */
 	private void generateId() throws MojoExecutionException {
 		try {
 			MessageDigest md5 = MessageDigest.getInstance("md5");
-			md5.update((this.project.getArtifactId() + this.project.getGroupId()).getBytes());
+			md5.update((getProject().getGroupId() + getProject().getArtifactId()).getBytes());
 			
 			char[] idHex = Hex.encodeHex(md5.digest());
 			StringBuffer idBuilder = new StringBuffer();
@@ -156,23 +208,23 @@ public class LexMojo extends AbstractMojo {
 
 	
 	private void preparePackagingTasks() {
-		
 		packagingTasks.add(new CopyDependenciesTask());
 		
 		packagingTasks.add(
 			new ArchiveTask(
-				 archive
+				 getOutputDirectory()
+				,archive
 				,classifier
 				
-				,id						,version
-				,name					,description
-				,categories				,installTarget
+				,id						,getProject().getVersion()
+				,getProject().getName()	,getProject().getDescription()
+				,categories				,extensionType
 				,trial					,luceeCoreVersion
 				,luceeLoaderVersion		,startBundles
 				
 				,cacheHandlers			,ormEngines
 				,monitors				,searchEngines
-				,resourceProviders		,amfs
+				,resourceProviders		,amfProviders
 				,jdbcDrivers			,mappings
 				,eventGateways
 			)	
@@ -182,7 +234,7 @@ public class LexMojo extends AbstractMojo {
 	}
 	
 	private void runPackagingTasks() throws Exception {
-		PackagingContext context = new PackagingContext(project, session, new File(outputDirectory), installTarget);
+		PackagingContext context = new PackagingContext(getProject(), getSession(), getExtensionDirectory(), extensionType);
 
 		for (PackagingTask task : packagingTasks) {
 			task.doPackaging(context);
