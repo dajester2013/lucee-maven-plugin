@@ -26,7 +26,7 @@ public abstract class AbstractLexMojo extends AbstractMojo {
 	/**
 	 * Where to output the built extension.
 	 */
-	@Parameter(defaultValue="${project.build.directory}")
+	@Parameter(defaultValue="${project.build.directory}", required = true)
 	private File outputDirectory;
 
 	/**

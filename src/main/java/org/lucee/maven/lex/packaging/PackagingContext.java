@@ -12,13 +12,15 @@ public class PackagingContext {
 	private final MavenProject project;
 	private final MavenSession session;
 
+	private final File extensionDirectory;
 	private final File outputDirectory;
 	private final ExtensionType installTarget;
 	
-	public PackagingContext(MavenProject project, MavenSession session, File outputDirectory, ExtensionType installTarget) {
+	public PackagingContext(MavenProject project, MavenSession session, File extensionDirectory, File outputDirectory, ExtensionType installTarget) {
 		
 		this.project = project;
 		this.session = session;
+		this.extensionDirectory = extensionDirectory;
 		this.outputDirectory = outputDirectory;
 		this.installTarget = installTarget;
 
@@ -27,6 +29,7 @@ public class PackagingContext {
 	public MavenProject getProject() {return project;}
 	public MavenSession getSession() {return session;}
 	public Set<?> getArtifacts() {return project.getArtifacts();}
+	public File getExtensionDirectory() {return extensionDirectory;}
 	public File getOutputDirectory() {return outputDirectory;}
 	public ExtensionType getInstallTarget() {return installTarget;}
 	

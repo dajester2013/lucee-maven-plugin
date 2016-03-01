@@ -29,10 +29,10 @@ public class LarCopySourcesMojo extends AbstractMojo {
 	 * The source directories containing the sources to be compiled.
 	 */
 	@Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true, required = true)
-	private String outputDirectory;
+	private File outputDirectory;
 
 	@Parameter(defaultValue = "src/main/lucee")
-	private String sourceDir;
+	private File sourceDir;
 
 	/**
 	 * A list of inclusion filters for the compiler.
@@ -47,6 +47,9 @@ public class LarCopySourcesMojo extends AbstractMojo {
 	private Set<String> excludes = new HashSet<String>();
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		System.out.println("LAR Source: "+ sourceDir);
+		System.out.println("LAR Out: "+ outputDirectory);
+		
 		includes.add("**/*.cfm");
 		includes.add("**/*.cfml");
 		includes.add("**/*.cfc");
@@ -58,12 +61,10 @@ public class LarCopySourcesMojo extends AbstractMojo {
 		scanner.addSourceMapping(new SuffixMapping("",""));
 
 		try {
-			File rootFile = new File(sourceDir);
-			sourceDir = rootFile.getAbsolutePath();
-			
+			File rootFile = sourceDir;
 			if (rootFile.isDirectory()) {
 				for (File source : scanner.getIncludedSources(rootFile, null)) {
-					File targetDir = new File(source.getParent().replace(sourceDir, outputDirectory));
+					File targetDir = new File(source.getParent().replace(sourceDir.getAbsolutePath(), outputDirectory.getAbsolutePath()));
 					if (!source.getParentFile().equals(sourceDir) && !targetDir.exists()) {
 						targetDir.mkdirs();
 					}

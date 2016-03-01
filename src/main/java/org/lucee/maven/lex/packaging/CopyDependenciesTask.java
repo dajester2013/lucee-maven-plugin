@@ -11,8 +11,8 @@ import org.lucee.maven.lex.Constants;
 public class CopyDependenciesTask implements PackagingTask {
 
 	public void doPackaging(PackagingContext context) throws Exception {
-		File larsDir = new File(context.getOutputDirectory(), Constants.DIR_ARCHIVES);
-		File jarsDir = new File(context.getOutputDirectory(), Constants.DIR_JARS);
+		File larsDir = new File(context.getExtensionDirectory(), Constants.DIR_ARCHIVES);
+		File jarsDir = new File(context.getExtensionDirectory(), Constants.DIR_JARS);
 		
 		Artifact a;
 		for (Object aObj : context.getArtifacts()) {
@@ -29,6 +29,15 @@ public class CopyDependenciesTask implements PackagingTask {
 					System.out.println("[WARNING] Unable to include "+a.toString()+"");
 					//throw new MojoFailureException("Lucee extension dependency "+a.toString()+" not included!", );
 			}
+		}
+		
+		File scanDir = context.getOutputDirectory();
+		File scanFile;
+		for (String file : scanDir.list()) {
+			if (file.endsWith(".lar"))
+				FileUtils.copyFileToDirectory(new File(scanDir, file), larsDir);
+			else if (file.endsWith(".jar"))
+				FileUtils.copyFileToDirectory(new File(scanDir, file), jarsDir);
 		}
 	}
 

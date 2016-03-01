@@ -8,19 +8,18 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 @Mojo(name="lex-config-project", threadSafe=true)
 public class ConfigureLexProjectMojo extends AbstractLexMojo {
 	/**
-	 * The list of resources we want to transfer.
+	 * Import the list of resources configured in the project.
 	 */
 	@Parameter( defaultValue = "${project.resources}", required = true, readonly = true )
 	private List<Resource> resources;
-
-	@Parameter(defaultValue="${project.build.directory}/extension")
-	private String extensionDirectory;
-
+	
+	@Parameter(defaultValue="src/main/ext-resources")
+	private String extensionResourcesDir;
+	
 	@Parameter(defaultValue="src/main/flds")
 	private String fldsSourceDir;
 	@Parameter(defaultValue="src/main/tlds")
@@ -44,7 +43,18 @@ public class ConfigureLexProjectMojo extends AbstractLexMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		Resource r;
 		
-		getProject().getBuild().setOutputDirectory(extensionDirectory);
+		if (!getExtensionDirectory().exists())
+			getExtensionDirectory().mkdirs();
+		
+		String extensionDirectory = getExtensionDirectory().getAbsolutePath();
+		
+		if (new File(extensionResourcesDir).exists()) {
+			r = new Resource();
+			r.setDirectory(extensionResourcesDir);
+			r.setFiltering(true);
+			r.setTargetPath(extensionDirectory);
+			resources.add(r);
+		}
 		
 		if (new File(fldsSourceDir).exists()) {
 			r = new Resource();

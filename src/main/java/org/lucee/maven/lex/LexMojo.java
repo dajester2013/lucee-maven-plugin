@@ -212,8 +212,7 @@ public class LexMojo extends AbstractLexMojo {
 		
 		packagingTasks.add(
 			new ArchiveTask(
-				 getOutputDirectory()
-				,archive
+				 archive
 				,classifier
 				
 				,id						,getProject().getVersion()
@@ -234,7 +233,7 @@ public class LexMojo extends AbstractLexMojo {
 	}
 	
 	private void runPackagingTasks() throws Exception {
-		PackagingContext context = new PackagingContext(getProject(), getSession(), getExtensionDirectory(), extensionType);
+		PackagingContext context = new PackagingContext(getProject(), getSession(), getExtensionDirectory(), getOutputDirectory(), extensionType);
 
 		for (PackagingTask task : packagingTasks) {
 			task.doPackaging(context);

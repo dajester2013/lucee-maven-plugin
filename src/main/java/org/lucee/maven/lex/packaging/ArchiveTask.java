@@ -41,10 +41,7 @@ public class ArchiveTask implements PackagingTask {
     private static final String MF_KEY_MAPPINGS				= "mapping";
     private static final String MF_KEY_EVENTGATEWAYS		= "event-handlers";
 
-    
-    private File outputDirectory;
-    
-	private MavenArchiveConfiguration archiveConfig;
+    private MavenArchiveConfiguration archiveConfig;
 	private String classifier;
 	
 	private String id;
@@ -70,8 +67,7 @@ public class ArchiveTask implements PackagingTask {
 
 	
 	public ArchiveTask(
-			 File outputDirectory
-			,MavenArchiveConfiguration archiveConfig
+			 MavenArchiveConfiguration archiveConfig
 			,String classifier 
 			
 			,String id, String version, String name,String description
@@ -83,6 +79,7 @@ public class ArchiveTask implements PackagingTask {
 			,List<? extends Config> jdbcDrivers			,List<? extends Config> mappings
 			,List<? extends Config> eventGateways
 	) {
+		
 		this.archiveConfig = archiveConfig;
 		this.classifier = classifier;
 		this.id = id;
@@ -149,11 +146,9 @@ public class ArchiveTask implements PackagingTask {
 		addConfigListEntry(archiveConfig, MF_KEY_MAPPINGS,			mappings);
 		addConfigListEntry(archiveConfig, MF_KEY_EVENTGATEWAYS,		eventGateways);
 		
-
-		archiver.getArchiver().addDirectory(context.getOutputDirectory(), DEFAULT_INCLUDES, DEFAULT_EXCLUDES);
+		archiver.getArchiver().addDirectory(context.getExtensionDirectory(), DEFAULT_INCLUDES, DEFAULT_EXCLUDES);
 		
 		archiver.createArchive(context.getSession(), context.getProject(), archiveConfig);
-		
 		
 		context.getProject().getArtifact().setFile(jarFile);
 	}
@@ -206,7 +201,7 @@ public class ArchiveTask implements PackagingTask {
 		fileName.append('.')
 				.append(ARCHIVE_FILE_EXTENSION);
 		
-		return new File(outputDirectory, fileName.toString());
+		return new File(context.getOutputDirectory(), fileName.toString());
 	}
 
 }

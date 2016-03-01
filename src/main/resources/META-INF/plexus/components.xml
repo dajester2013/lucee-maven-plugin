@@ -14,7 +14,7 @@
 						<phases>
 							<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
 							<compile>${project.groupId}:${project.artifactId}:${project.version}:lar-copy-sources</compile>
-							<process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
+							<!-- <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources> -->
 							<!-- <test-compile>${project.groupId}:${project.artifactId}:${project.version}:testCompile</test-compile> -->
 							<test>org.apache.maven.plugins:maven-surefire-plugin:test</test>
 							<package>${project.groupId}:${project.artifactId}:${project.version}:lar</package>
@@ -56,8 +56,11 @@
 						in here if you want anything extra to be run -->
 					<initialize>${project.groupId}:${project.artifactId}:${project.version}:lex-config-project</initialize>
 					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
-					<compile></compile>
-					<package>${project.groupId}:${project.artifactId}:${project.version}:lex</package>
+					<compile>${project.groupId}:${project.artifactId}:${project.version}:lar-copy-sources</compile>
+					<package>
+						 ${project.groupId}:${project.artifactId}:${project.version}:lar
+						,${project.groupId}:${project.artifactId}:${project.version}:lex
+					</package>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
 					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>

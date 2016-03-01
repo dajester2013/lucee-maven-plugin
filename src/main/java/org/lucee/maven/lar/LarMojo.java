@@ -43,7 +43,7 @@ public class LarMojo extends AbstractMojo {
 	private String archiveType;
 
 	@Parameter(defaultValue="${project.build.outputDirectory}", required=true)
-	private String sourceDir;
+	private String outputDirectory;
 
 	@Parameter(defaultValue="${project.build.directory}/lucee", required=true)
 	private String luceeServerDirectory;
@@ -65,6 +65,12 @@ public class LarMojo extends AbstractMojo {
     
     @SuppressWarnings("restriction")
 	public void execute() throws MojoExecutionException {
+    	if (!(new File("src/main/lucee").exists())) // fix this
+    		if (project.getPackaging().equals("lar"))
+    			throw new MojoExecutionException("Missing source for Lucee archive");
+    		else
+    			return;
+    	
     	System.getProperties().put("lucee.server.dir", luceeServerDirectory);
     	System.getProperties().put("lucee.web.dir", luceeWebDirectory);
     	
@@ -80,16 +86,22 @@ public class LarMojo extends AbstractMojo {
 		out.println("done.");
 		
 		if (engine == null) {
-			throw new MojoExecutionException("Missing plugin dependency for Lucee");
+			if (project.getPackaging().equals("lar"))
+				throw new MojoExecutionException("Missing plugin dependency for Lucee for creating the archive.");
+			else {
+				System.out.println("[WARNING] Lucee runtime dependency not included in the plugin classpath - Lucee archive not built.");
+				return;
+			}
 		}
 		
 		try {
+			String finalFileName = targetPath + "/" + outputFileName + (classifier != null ? "-" + classifier : "") + ".lar";
 			out.print("Packaging Lucee Archive...");
 			engine.eval(  "try{admin	action=\"updatePassword\" type=\"web\" newPassword=\"password\";}catch(any e){/*password already set*/}"
 					
 						+ "admin	action=\"" + (archiveType.equalsIgnoreCase("component") ? "updateComponentMapping" : "updateMapping") + "\""
 						+ "			type=\"web\""
-						+ "			physical=\"" + sourceDir + "\""
+						+ "			physical=\"" + outputDirectory + "\""
 						+ "			archive=\"\""
 						+ "			virtual=\"/" + project.getArtifactId() + "-" + project.getVersion() + "\""
 						+ "			password=\"password\""
@@ -100,7 +112,7 @@ public class LarMojo extends AbstractMojo {
 						+ "			type=\"web\""
 						+ "			virtual=\"/" + project.getArtifactId() + "-" + project.getVersion() + "\""
 						+ "			password=\"password\""
-						+ "			file=\""+targetPath + "/" + outputFileName + (classifier != null ? "-" + classifier : "") + "\""
+						+ "			file=\""+finalFileName+"\""
 						+ "			addCFMLFiles=" + (includeSourceFiles ? "true" : "false")
 						+ "			addNonCFMLFiles=" + (includeStaticFiles ? "true" : "false")
 						+ "			append=false"
