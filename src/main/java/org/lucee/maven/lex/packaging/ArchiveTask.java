@@ -49,7 +49,6 @@ public class ArchiveTask implements PackagingTask {
 	private String name;
 	private String description;
 	private List<String> categories;
-	private ExtensionType installTarget; // for release type
 	private Boolean trial;
 	private String luceeCoreVersion;
 	private String luceeLoaderVersion;
@@ -71,7 +70,7 @@ public class ArchiveTask implements PackagingTask {
 			,String classifier 
 			
 			,String id, String version, String name,String description
-			,List<String> categories, ExtensionType installTarget,Boolean trial
+			,List<String> categories, Boolean trial
 			,String luceeCoreVersion, String luceeLoaderVersion ,Boolean startBundles
 			,List<? extends Config> cacheHandlers		,List<? extends Config> ormEngines
 			,List<? extends Config>  monitors			,List<? extends Config> searchEngines
@@ -87,7 +86,6 @@ public class ArchiveTask implements PackagingTask {
 		this.name = name;
 		this.description = description;
 		this.categories = categories;
-		this.installTarget = installTarget; // for release type
 		this.trial = trial;
 		this.luceeCoreVersion = luceeCoreVersion;
 		this.luceeLoaderVersion = luceeLoaderVersion;
@@ -117,18 +115,16 @@ public class ArchiveTask implements PackagingTask {
 		if (version == null) throw new MojoExecutionException("No extension version set."); // version is gathered from the pom, so this should never happen!
 		
 		if (name == null) name = context.getProject().getArtifactId();
-		if (installTarget == null) installTarget = ExtensionType.all;
-		
 		
 		archiveConfig.getManifest().setMainClass(null);
 		
-		addStringEntry(archiveConfig, MF_KEY_ID, id);
-		addStringEntry(archiveConfig, MF_KEY_VERSION, version);
-		addStringEntry(archiveConfig, MF_KEY_NAME, name);
-		addStringEntry(archiveConfig, MF_KEY_DESCRIPTION, description);
-		addStringEntry(archiveConfig, MF_KEY_INSTALLTARGET, installTarget.name());
-		addStringEntry(archiveConfig, MF_KEY_LUCEECOREVERSION, luceeCoreVersion);
-		addStringEntry(archiveConfig, MF_KEY_LUCEELOADERVERSION, luceeLoaderVersion);
+		addStringEntry(archiveConfig, MF_KEY_ID,					id);
+		addStringEntry(archiveConfig, MF_KEY_VERSION,				version);
+		addStringEntry(archiveConfig, MF_KEY_NAME,					name);
+		addStringEntry(archiveConfig, MF_KEY_DESCRIPTION,			description);
+		addStringEntry(archiveConfig, MF_KEY_INSTALLTARGET,			context.getExtensionType().name());
+		addStringEntry(archiveConfig, MF_KEY_LUCEECOREVERSION,		luceeCoreVersion);
+		addStringEntry(archiveConfig, MF_KEY_LUCEELOADERVERSION,	luceeLoaderVersion);
 
 		if (categories != null)
 			addStringEntry(archiveConfig, MF_KEY_CATEGORIES, categories.toString());

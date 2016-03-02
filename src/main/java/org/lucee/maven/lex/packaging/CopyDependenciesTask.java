@@ -14,6 +14,7 @@ public class CopyDependenciesTask implements PackagingTask {
 		File larsDir = new File(context.getExtensionDirectory(), Constants.DIR_ARCHIVES);
 		File jarsDir = new File(context.getExtensionDirectory(), Constants.DIR_JARS);
 		
+		// copy dependencies in
 		Artifact a;
 		for (Object aObj : context.getArtifacts()) {
 			
@@ -31,13 +32,19 @@ public class CopyDependenciesTask implements PackagingTask {
 			}
 		}
 		
-		File scanDir = context.getOutputDirectory();
-		File scanFile;
-		for (String file : scanDir.list()) {
-			if (file.endsWith(".lar"))
-				FileUtils.copyFileToDirectory(new File(scanDir, file), larsDir);
-			else if (file.endsWith(".jar"))
-				FileUtils.copyFileToDirectory(new File(scanDir, file), jarsDir);
+		if (context.getProject().getPackaging().equals(Constants.LEX_PACKAGING)) {
+			File scanDir = context.getOutputDirectory();
+			File scanFile;
+			for (String file : scanDir.list()) {
+				scanFile = new File(scanDir,file);
+				if (file.endsWith(".lar")) {
+					FileUtils.copyFileToDirectory(scanFile, larsDir);
+					scanFile.delete();
+				} else if (file.endsWith(".jar")) {
+					FileUtils.copyFileToDirectory(scanFile, jarsDir);
+					scanFile.delete();
+				}
+			}
 		}
 	}
 

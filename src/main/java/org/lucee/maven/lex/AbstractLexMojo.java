@@ -14,19 +14,19 @@ public abstract class AbstractLexMojo extends AbstractMojo {
 	/**
 	 * Import the {@link MavenProject}.
 	 */
-	@Parameter(defaultValue = "${project}", readonly = true, required = true)
+	@Parameter(defaultValue="${project}", readonly=true, required=true)
 	private MavenProject project;
 
     /**
      * Import the {@link MavenSession}.
      */
-    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    @Parameter(defaultValue="${session}", readonly=true, required=true)
     private MavenSession session;
     
 	/**
 	 * Where to output the built extension.
 	 */
-	@Parameter(defaultValue="${project.build.directory}", required = true)
+	@Parameter(defaultValue="${project.build.directory}", required=true)
 	private File outputDirectory;
 
 	/**
@@ -34,6 +34,8 @@ public abstract class AbstractLexMojo extends AbstractMojo {
 	 */
 	@Parameter(defaultValue="${project.build.directory}/extension")
 	private File extensionDirectory;
+	
+	
 	
 	
 	protected MavenProject getProject() {

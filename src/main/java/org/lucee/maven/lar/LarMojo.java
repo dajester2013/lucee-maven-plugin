@@ -42,14 +42,11 @@ public class LarMojo extends AbstractMojo {
 	@Parameter(defaultValue="component", required=true)
 	private String archiveType;
 
-	@Parameter(defaultValue="${project.build.outputDirectory}", required=true)
+	@Parameter(defaultValue="${project.build.directory}/archive", required=true)
 	private String outputDirectory;
 
 	@Parameter(defaultValue="${project.build.directory}/lucee", required=true)
-	private String luceeServerDirectory;
-
-	@Parameter(defaultValue="${project.build.directory}/lucee", required=true)
-	private String luceeWebDirectory;
+	private File luceeRuntimeDirectory;
 
 	@Parameter(defaultValue="${project.build.directory}", required=true)
 	private String targetPath;
@@ -60,6 +57,12 @@ public class LarMojo extends AbstractMojo {
 	@Parameter(defaultValue="${project}", readonly=true, required=true)
 	private MavenProject project;
 
+	/**
+	 * Whether to show verbose outut from the lucee build process.
+	 */
+	@Parameter(defaultValue="false")
+	private boolean verbose;
+	
     @Component
     private MavenProjectHelper projectHelper;
     
@@ -71,14 +74,16 @@ public class LarMojo extends AbstractMojo {
     		else
     			return;
     	
-    	System.getProperties().put("lucee.server.dir", luceeServerDirectory);
-    	System.getProperties().put("lucee.web.dir", luceeWebDirectory);
+    	System.getProperties().put("lucee.server.dir", luceeRuntimeDirectory.getAbsolutePath());
+    	System.getProperties().put("lucee.web.dir", luceeRuntimeDirectory.getAbsolutePath());
     	
     	PrintStream devnull = new PrintStream(new ByteArrayOutputStream());
     	PrintStream out = System.out;
     	PrintStream err = System.err;
-    	System.setOut(devnull);
-    	System.setErr(devnull);
+    	if (!verbose) {
+	    	System.setOut(devnull);
+	    	System.setErr(devnull);
+    	}
     	
     	out.print("Initializing Lucee execution environment...");
     	ScriptEngineManager manager = new ScriptEngineManager();
@@ -89,7 +94,7 @@ public class LarMojo extends AbstractMojo {
 			if (project.getPackaging().equals("lar"))
 				throw new MojoExecutionException("Missing plugin dependency for Lucee for creating the archive.");
 			else {
-				System.out.println("[WARNING] Lucee runtime dependency not included in the plugin classpath - Lucee archive not built.");
+				out.println("[WARNING] Lucee runtime dependency not included in the plugin classpath - Lucee archive not built.");
 				return;
 			}
 		}

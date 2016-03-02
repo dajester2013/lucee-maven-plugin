@@ -217,7 +217,7 @@ public class LexMojo extends AbstractLexMojo {
 				
 				,id						,getProject().getVersion()
 				,getProject().getName()	,getProject().getDescription()
-				,categories				,extensionType
+				,categories
 				,trial					,luceeCoreVersion
 				,luceeLoaderVersion		,startBundles
 				

@@ -28,11 +28,14 @@ public class LarCopySourcesMojo extends AbstractMojo {
 	/**
 	 * The source directories containing the sources to be compiled.
 	 */
-	@Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true, required = true)
+	@Parameter(defaultValue = "${project.build.directory}/archive", readonly = true, required = true)
 	private File outputDirectory;
 
 	@Parameter(defaultValue = "src/main/lucee")
 	private File sourceDir;
+
+	@Parameter(defaultValue = "src/main/lar-resources")
+	private File resourcesDir;
 
 	/**
 	 * A list of inclusion filters for the compiler.
@@ -41,10 +44,22 @@ public class LarCopySourcesMojo extends AbstractMojo {
 	private Set<String> includes = new HashSet<String>();
 
 	/**
+	 * A list of inclusion filters for the compiler.
+	 */
+	@Parameter
+	private Set<String> includesResources = new HashSet<String>();
+
+	/**
 	 * A list of exclusion filters for the compiler.
 	 */
 	@Parameter
 	private Set<String> excludes = new HashSet<String>();
+
+	/**
+	 * A list of exclusion filters for the compiler.
+	 */
+	@Parameter
+	private Set<String> excludesResources = new HashSet<String>();
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		System.out.println("LAR Source: "+ sourceDir);
@@ -55,15 +70,20 @@ public class LarCopySourcesMojo extends AbstractMojo {
 		includes.add("**/*.cfc");
 		includes.add("**/*.lucee");
 		includes.add("**/*.lc");
+		
+		if (includesResources.size() == 0) {
+			includesResources.add("**/*.*");
+		}
 
-		SourceInclusionScanner scanner = new SimpleSourceInclusionScanner(includes, excludes);
+		SourceInclusionScanner cfScanner = new SimpleSourceInclusionScanner(includes, excludes);
+		SourceInclusionScanner resScanner = new SimpleSourceInclusionScanner(includesResources, excludesResources);
 
-		scanner.addSourceMapping(new SuffixMapping("",""));
+		cfScanner.addSourceMapping(new SuffixMapping("",""));
 
 		try {
 			File rootFile = sourceDir;
 			if (rootFile.isDirectory()) {
-				for (File source : scanner.getIncludedSources(rootFile, null)) {
+				for (File source : cfScanner.getIncludedSources(rootFile, null)) {
 					File targetDir = new File(source.getParent().replace(sourceDir.getAbsolutePath(), outputDirectory.getAbsolutePath()));
 					if (!source.getParentFile().equals(sourceDir) && !targetDir.exists()) {
 						targetDir.mkdirs();
@@ -72,6 +92,19 @@ public class LarCopySourcesMojo extends AbstractMojo {
 					FileUtils.copyFileToDirectory(source, targetDir);
 				}
 			}
+			
+			rootFile = resourcesDir;
+			if (rootFile.isDirectory()) {
+				for (File source : resScanner.getIncludedSources(rootFile, null)) {
+					File targetDir = new File(source.getParent().replace(sourceDir.getAbsolutePath(), outputDirectory.getAbsolutePath()));
+					if (!source.getParentFile().equals(sourceDir) && !targetDir.exists()) {
+						targetDir.mkdirs();
+					}
+					
+					FileUtils.copyFileToDirectory(source, targetDir);
+				}
+			}
+			
 		} catch (InclusionScanException e) {
 			throw new MojoExecutionException("Error scanning source root: \'" + sourceDir + "\'.", e);
 		} catch (IOException e) {
