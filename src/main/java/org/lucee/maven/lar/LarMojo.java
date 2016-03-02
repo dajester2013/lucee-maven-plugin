@@ -42,6 +42,9 @@ public class LarMojo extends AbstractMojo {
 	@Parameter(defaultValue="component", required=true)
 	private String archiveType;
 
+	@Parameter(defaultValue="/${project.artifactId}-${project.version}", required=true)
+	private String archiveVirtualPath;
+
 	@Parameter(defaultValue="${project.build.directory}/archive", required=true)
 	private String outputDirectory;
 
@@ -100,7 +103,7 @@ public class LarMojo extends AbstractMojo {
 		}
 		
 		try {
-			String finalFileName = targetPath + "/" + outputFileName + (classifier != null ? "-" + classifier : "") + ".lar";
+			String finalFileName = targetPath + "/" + outputFileName + (classifier != null ? "-" + classifier : "");
 			out.print("Packaging Lucee Archive...");
 			engine.eval(  "try{admin	action=\"updatePassword\" type=\"web\" newPassword=\"password\";}catch(any e){/*password already set*/}"
 					
@@ -108,16 +111,16 @@ public class LarMojo extends AbstractMojo {
 						+ "			type=\"web\""
 						+ "			physical=\"" + outputDirectory + "\""
 						+ "			archive=\"\""
-						+ "			virtual=\"/" + project.getArtifactId() + "-" + project.getVersion() + "\""
+						+ "			virtual=\"/" + archiveVirtualPath + "\""
 						+ "			password=\"password\""
 						+ "			primary=\"physical\""
 						+ "			;"
 						
 						+ "admin	action=\"" + (archiveType.equalsIgnoreCase("component") ? "createComponentArchive" : "createArchive") + "\""
 						+ "			type=\"web\""
-						+ "			virtual=\"/" + project.getArtifactId() + "-" + project.getVersion() + "\""
+						+ "			virtual=\"/" + archiveVirtualPath + "\""
 						+ "			password=\"password\""
-						+ "			file=\""+finalFileName+"\""
+						+ "			file=\""+finalFileName+".lar\""
 						+ "			addCFMLFiles=" + (includeSourceFiles ? "true" : "false")
 						+ "			addNonCFMLFiles=" + (includeStaticFiles ? "true" : "false")
 						+ "			append=false"
@@ -125,7 +128,7 @@ public class LarMojo extends AbstractMojo {
 
 						+ "admin	action=\"" + (archiveType.equalsIgnoreCase("component") ? "removeComponentMapping" : "removeMapping") + "\""
 						+ "			type=\"web\""
-						+ "			virtual=\"/" + project.getArtifactId() + "-" + project.getVersion() + "\""
+						+ "			virtual=\"/" + archiveVirtualPath + "\""
 						+ "			password=\"password\""
 						+ "			;"
 						
