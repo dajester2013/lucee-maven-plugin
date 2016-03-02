@@ -111,14 +111,14 @@ public class LarMojo extends AbstractMojo {
 						+ "			type=\"web\""
 						+ "			physical=\"" + outputDirectory + "\""
 						+ "			archive=\"\""
-						+ "			virtual=\"/" + archiveVirtualPath + "\""
+						+ "			virtual=\"" + archiveVirtualPath + "\""
 						+ "			password=\"password\""
 						+ "			primary=\"physical\""
 						+ "			;"
 						
 						+ "admin	action=\"" + (archiveType.equalsIgnoreCase("component") ? "createComponentArchive" : "createArchive") + "\""
 						+ "			type=\"web\""
-						+ "			virtual=\"/" + archiveVirtualPath + "\""
+						+ "			virtual=\"" + archiveVirtualPath + "\""
 						+ "			password=\"password\""
 						+ "			file=\""+finalFileName+".lar\""
 						+ "			addCFMLFiles=" + (includeSourceFiles ? "true" : "false")
@@ -128,7 +128,7 @@ public class LarMojo extends AbstractMojo {
 
 						+ "admin	action=\"" + (archiveType.equalsIgnoreCase("component") ? "removeComponentMapping" : "removeMapping") + "\""
 						+ "			type=\"web\""
-						+ "			virtual=\"/" + archiveVirtualPath + "\""
+						+ "			virtual=\"" + archiveVirtualPath + "\""
 						+ "			password=\"password\""
 						+ "			;"
 						
