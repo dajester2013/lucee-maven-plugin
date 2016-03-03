@@ -42,6 +42,7 @@ public class ArchiveTask implements PackagingTask {
     private static final String MF_KEY_EVENTGATEWAYS		= "event-handlers";
 
     private MavenArchiveConfiguration archiveConfig;
+    private JarArchiver lexArchiver;
 	private String classifier;
 	
 	private String id;
@@ -66,7 +67,7 @@ public class ArchiveTask implements PackagingTask {
 
 	
 	public ArchiveTask(
-			 MavenArchiveConfiguration archiveConfig
+			 MavenArchiveConfiguration archiveConfig	,JarArchiver lexArchiver
 			,String classifier 
 			
 			,String id, String version, String name,String description
@@ -80,6 +81,7 @@ public class ArchiveTask implements PackagingTask {
 	) {
 		
 		this.archiveConfig = archiveConfig;
+		this.lexArchiver = lexArchiver;
 		this.classifier = classifier;
 		this.id = id;
 		this.version = version;
@@ -103,13 +105,12 @@ public class ArchiveTask implements PackagingTask {
 	}
  
 	public void doPackaging(PackagingContext context) throws Exception {
-		JarArchiver jarArchiver = new JarArchiver();
 		MavenArchiver archiver = new MavenArchiver();
 		
-		File jarFile = getLexFile(context);
+		File lexFile = getLexFile(context);
 		
-		archiver.setArchiver(jarArchiver);
-		archiver.setOutputFile(jarFile);
+		archiver.setArchiver(lexArchiver);
+		archiver.setOutputFile(lexFile);
 		
 		if (id == null) throw new MojoExecutionException("No extension ID provided."); // id is generated if one is not set, so this should never happen!
 		if (version == null) throw new MojoExecutionException("No extension version set."); // version is gathered from the pom, so this should never happen!
@@ -146,7 +147,7 @@ public class ArchiveTask implements PackagingTask {
 		
 		archiver.createArchive(context.getSession(), context.getProject(), archiveConfig);
 		
-		context.getProject().getArtifact().setFile(jarFile);
+		context.getProject().getArtifact().setFile(lexFile);
 	}
 
 	private void addStringEntry(MavenArchiveConfiguration archiveConfig, String key, String value) {

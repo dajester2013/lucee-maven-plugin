@@ -69,19 +69,23 @@ public class LarCopySourcesMojo extends ResourcesMojo {
 		includes.add("**/*.lucee");
 		includes.add("**/*.lc");
 
-		r = new Resource();
-		r.setDirectory(sourceDir.getAbsolutePath());
-		r.setFiltering(false);
-		r.setIncludes(includes);
-		r.setExcludes(excludes);
-		resources.add(r);
-
-		r = new Resource();
-		r.setDirectory(resourcesDir.getAbsolutePath());
-		r.setFiltering(true);
-		r.setIncludes(includesResources);
-		r.setExcludes(excludesResources);
-		resources.add(r);
+		if (sourceDir.exists()) {
+			r = new Resource();
+			r.setDirectory(sourceDir.getAbsolutePath());
+			r.setFiltering(false);
+			r.setIncludes(includes);
+			r.setExcludes(excludes);
+			resources.add(r);
+		}
+		
+		if (resourcesDir.exists()) {
+			r = new Resource();
+			r.setDirectory(resourcesDir.getAbsolutePath());
+			r.setFiltering(true);
+			r.setIncludes(includesResources);
+			r.setExcludes(excludesResources);
+			resources.add(r);
+		}
 
 		return resources;
 	}

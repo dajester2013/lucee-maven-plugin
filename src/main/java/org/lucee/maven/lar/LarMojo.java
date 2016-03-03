@@ -11,6 +11,7 @@ import javax.script.ScriptException;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -71,6 +72,8 @@ public class LarMojo extends AbstractMojo {
     
     @SuppressWarnings("restriction")
 	public void execute() throws MojoExecutionException {
+    	Log log = getLog();
+    	
     	if (!(new File("src/main/lucee").exists())) // fix this
     		if (project.getPackaging().equals("lar"))
     			throw new MojoExecutionException("Missing source for Lucee archive");
@@ -83,15 +86,16 @@ public class LarMojo extends AbstractMojo {
     	PrintStream devnull = new PrintStream(new ByteArrayOutputStream());
     	PrintStream out = System.out;
     	PrintStream err = System.err;
+    	
     	if (!verbose) {
 	    	System.setOut(devnull);
 	    	System.setErr(devnull);
     	}
     	
-    	out.print("Initializing Lucee execution environment...");
+    	log.info("Initializing Lucee execution environment...");
     	ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName("Lucee");
-		out.println("done.");
+		log.info("done.");
 		
 		if (engine == null) {
 			if (project.getPackaging().equals("lar"))
@@ -104,7 +108,7 @@ public class LarMojo extends AbstractMojo {
 		
 		try {
 			String finalFileName = targetPath + "/" + outputFileName + (classifier != null ? "-" + classifier : "");
-			out.print("Packaging Lucee Archive...");
+			log.info("Packaging Lucee Archive...");
 			engine.eval(  "try{admin	action=\"updatePassword\" type=\"web\" newPassword=\"password\";}catch(any e){/*password already set*/}"
 					
 						+ "admin	action=\"" + (archiveType.equalsIgnoreCase("component") ? "updateComponentMapping" : "updateMapping") + "\""
@@ -133,8 +137,12 @@ public class LarMojo extends AbstractMojo {
 						+ "			;"
 						
 						);
-			out.println("done.");
-			
+			log.info("done.");
+	    	
+			if (project.getPackaging().equals("lar")) {
+				log.info("Attaching artifact " + finalFileName + ".lar");
+				project.getArtifact().setFile(new File(finalFileName + ".lar"));
+			}
 		} catch (ScriptException e) {
 			throw new MojoExecutionException("Error", e);
 		} finally {

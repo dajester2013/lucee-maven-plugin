@@ -10,11 +10,14 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.lucee.maven.lex.config.AMFProviderConfig;
 import org.lucee.maven.lex.config.CacheHandlerConfig;
 import org.lucee.maven.lex.config.EventGatewayConfig;
@@ -158,7 +161,10 @@ public class LexMojo extends AbstractLexMojo {
      * Configuration for the archive. {@link MavenArchiveConfiguration}
      */
     @Parameter
-    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+    private MavenArchiveConfiguration extensionConfig = new MavenArchiveConfiguration();
+    
+    @Component( role = Archiver.class, hint = "jar" )
+    private JarArchiver lexArchiver;
 
     
     private List<PackagingTask> packagingTasks = new ArrayList<PackagingTask>();
@@ -212,14 +218,15 @@ public class LexMojo extends AbstractLexMojo {
 		
 		packagingTasks.add(
 			new ArchiveTask(
-				 archive
+				 extensionConfig		,lexArchiver
 				,classifier
 				
 				,id						,getProject().getVersion()
 				,getProject().getName()	,getProject().getDescription()
-				,categories
-				,trial					,luceeCoreVersion
-				,luceeLoaderVersion		,startBundles
+				
+				,categories				,trial
+				,luceeCoreVersion		,luceeLoaderVersion
+				,startBundles
 				
 				,cacheHandlers			,ormEngines
 				,monitors				,searchEngines
