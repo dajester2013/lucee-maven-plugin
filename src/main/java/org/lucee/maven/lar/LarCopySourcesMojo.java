@@ -56,7 +56,7 @@ public class LarCopySourcesMojo extends ResourcesMojo {
 	}
 
 	public File getOutputDirectory() {
-		return new File("target/archive");
+		return outputDirectory;
 	}
 
 	public List<Resource> getResources() {
