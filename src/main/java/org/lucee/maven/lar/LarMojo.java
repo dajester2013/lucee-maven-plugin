@@ -16,6 +16,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -23,6 +24,7 @@ import org.apache.maven.project.MavenProjectHelper;
 	 name			= "lar"
 	,defaultPhase	= LifecyclePhase.PACKAGE
 	,threadSafe		= true
+	,requiresDependencyCollection = ResolutionScope.COMPILE
 )
 public class LarMojo extends AbstractMojo {
     /**
@@ -47,7 +49,7 @@ public class LarMojo extends AbstractMojo {
 	private String archiveVirtualPath;
 
 	@Parameter(defaultValue="${project.build.directory}/archive", required=true)
-	private String outputDirectory;
+	private File outputDirectory;
 
 	@Parameter(defaultValue="${project.build.directory}/lucee", required=true)
 	private File luceeRuntimeDirectory;
@@ -70,11 +72,10 @@ public class LarMojo extends AbstractMojo {
     @Component
     private MavenProjectHelper projectHelper;
     
-    @SuppressWarnings("restriction")
 	public void execute() throws MojoExecutionException {
     	Log log = getLog();
     	
-    	if (!(new File("src/main/lucee").exists())) // fix this
+    	if (!outputDirectory.exists())
     		if (project.getPackaging().equals("lar"))
     			throw new MojoExecutionException("Missing source for Lucee archive");
     		else
@@ -105,6 +106,8 @@ public class LarMojo extends AbstractMojo {
 				return;
 			}
 		}
+		
+		log.info("Lucee version " + engine.getFactory().getEngineVersion());
 		
 		try {
 			String finalFileName = targetPath + "/" + outputFileName + (classifier != null ? "-" + classifier : "");
