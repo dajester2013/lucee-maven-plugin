@@ -3,8 +3,6 @@ package org.jdsnet.maven.lucee.lex.packaging;
 import java.io.File;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.FileUtils;
 import org.jdsnet.maven.lucee.lex.Constants;
 

@@ -1,13 +1,11 @@
 package org.jdsnet.maven.lucee.lex;
 
-import java.io.File;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -15,7 +13,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.jdsnet.maven.lucee.lex.config.AMFProviderConfig;

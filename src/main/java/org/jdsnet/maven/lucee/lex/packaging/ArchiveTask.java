@@ -2,14 +2,12 @@ package org.jdsnet.maven.lucee.lex.packaging;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.jdsnet.maven.lucee.lex.ExtensionType;
 import org.jdsnet.maven.lucee.lex.config.Config;
 
 public class ArchiveTask implements PackagingTask {

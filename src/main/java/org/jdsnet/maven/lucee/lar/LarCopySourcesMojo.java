@@ -16,7 +16,7 @@ public class LarCopySourcesMojo extends ResourcesMojo {
 	 * Where to output the files that will be archived.
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/archive", readonly = true, required = true)
-	private File outputDirectory;
+	private File larOutputDirectory;
 
 	/**
 	 * A list of inclusion filters for the sourceDir.
@@ -52,11 +52,11 @@ public class LarCopySourcesMojo extends ResourcesMojo {
 	private File resourcesDir;
 
 	public void setOutputDirectory(File outputDirectory) {
-		this.outputDirectory = outputDirectory;
+		this.larOutputDirectory = outputDirectory;
 	}
 
 	public File getOutputDirectory() {
-		return outputDirectory;
+		return larOutputDirectory;
 	}
 
 	public List<Resource> getResources() {
