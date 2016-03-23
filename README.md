@@ -15,18 +15,10 @@ Usage:
   <build>
   	<plugins>
   		<plugin>
-  			<groupId>org.lucee</groupId>
+  			<groupId>org.jdsnet.maven</groupId>
   			<artifactId>lucee-maven-plugin</artifactId>
   			<version>0.0.1-SNAPSHOT</version>
   			<extensions>true</extensions>
-  			
-  			<dependencies>
-  				<dependency>
-  					<groupId>org.lucee</groupId>
-  					<artifactId>lucee</artifactId>
-  					<version>5.0.0.178-BETA</version>
-  				</dependency>
-  			</dependencies>
   		</plugin>
   	</plugins>
   </build>
