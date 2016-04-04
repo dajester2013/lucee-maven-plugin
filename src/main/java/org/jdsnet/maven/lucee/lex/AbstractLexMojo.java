@@ -6,47 +6,17 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.jdsnet.maven.lucee.AbstractLuceeMojo;
 
-public abstract class AbstractLexMojo extends AbstractMojo {
+public abstract class AbstractLexMojo extends AbstractLuceeMojo {
 
-	/**
-	 * Import the {@link MavenProject}.
-	 */
-	@Parameter(defaultValue="${project}", readonly=true, required=true)
-	private MavenProject project;
-
-    /**
-     * Import the {@link MavenSession}.
-     */
-    @Parameter(defaultValue="${session}", readonly=true, required=true)
-    private MavenSession session;
     
-	/**
-	 * Where to output the built extension.
-	 */
-	@Parameter(defaultValue="${project.build.directory}", required=true)
-	private File outputDirectory;
-
 	/**
 	 * Where to place the extension sources during the build process.
 	 */
 	@Parameter(defaultValue="${project.build.directory}/extension")
 	private File extensionDirectory;
 	
-	
-	
-	
-	protected MavenProject getProject() {
-		return project;
-	}
-	
-	protected MavenSession getSession() {
-		return session;
-	}
-	
-	protected File getOutputDirectory() {
-		return outputDirectory;
-	}
 	
 	protected File getExtensionDirectory() {
 		return extensionDirectory;

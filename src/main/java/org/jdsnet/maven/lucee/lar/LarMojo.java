@@ -3,7 +3,6 @@ package org.jdsnet.maven.lucee.lar;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
-import java.util.List;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -15,7 +14,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.jdsnet.maven.lucee.AbstractLuceeMojo;
 
 @Mojo(
 	 name			= "lar"
@@ -23,12 +21,7 @@ import org.jdsnet.maven.lucee.AbstractLuceeMojo;
 	,threadSafe		= true
 	,requiresDependencyCollection = ResolutionScope.COMPILE
 )
-public class LarMojo extends AbstractLuceeMojo {
-    /**
-     * Project classpath.
-     */
-    @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
-    private List<String> classpathElements;
+public class LarMojo extends AbstractLarMojo {
     
     /**
      * Whether or not to include source cfc/cfm/lucee/lc files in the final lar file.
@@ -55,19 +48,10 @@ public class LarMojo extends AbstractLuceeMojo {
 	private String larVirtualPath;
 	
 	/**
-	 * Output destination.  For lar packaging, this is the where to place the cfml/lucee/static files that will be packaged into the final archive.
-	 */
-	@Parameter(defaultValue="${project.build.directory}/archive", required=true)
-	private File outputDirectory;
-	
-	/**
 	 * Where to place the lucee runtime files necessary for the compilation phase
 	 */
-	@Parameter(defaultValue="${project.build.directory}/lucee", required=true)
+	@Parameter(property="lucee.runtime.dir", defaultValue="${project.build.directory}/lucee", required=true)
 	private File luceeRuntimeDirectory;
-	
-	@Parameter(defaultValue="${project.build.directory}", required=true)
-	private String targetPath;
 	
 	/**
 	 * The lar's file name.
@@ -82,14 +66,9 @@ public class LarMojo extends AbstractLuceeMojo {
 	private boolean verbose;
 	
 	public void execute() throws MojoExecutionException {
-		validate();
     	Log log = getLog();
     	
-    	if (!outputDirectory.exists())
-    		if (getProject().getPackaging().equals("lar"))
-    			throw new MojoExecutionException("Missing source for Lucee archive");
-    		else
-    			return;
+    	if (!validate()) return;
     	
     	System.getProperties().put("lucee.server.dir", luceeRuntimeDirectory.getAbsolutePath());
     	System.getProperties().put("lucee.web.dir", luceeRuntimeDirectory.getAbsolutePath());
@@ -110,9 +89,9 @@ public class LarMojo extends AbstractLuceeMojo {
 		
 		if (engine == null) {
 			if (getProject().getPackaging().equals("lar"))
-				throw new MojoExecutionException("Missing plugin dependency for Lucee for creating the archive.");
+				throw new MojoExecutionException("Lucee runtime dependency not included in the plugin classpath.  Please verify the plugin dependency is set.");
 			else {
-				out.println("[WARNING] Lucee runtime dependency not included in the plugin classpath - Lucee archive not built.");
+				getLog().warn("Lucee runtime dependency not included in the plugin classpath - Lucee archive not built.");
 				return;
 			}
 		}
@@ -120,13 +99,13 @@ public class LarMojo extends AbstractLuceeMojo {
 		log.info("Lucee version " + engine.getFactory().getEngineVersion());
 		
 		try {
-			String finalFileName = targetPath + "/" + outputFileName + (getClassifier() != null ? "-" + getClassifier() : "");
+			String finalFileName = getOutputDirectory().getAbsolutePath() + "/" + outputFileName + (getClassifier() != null ? "-" + getClassifier() : "");
 			log.info("Packaging Lucee Archive...");
 			engine.eval(  "try{admin	action=\"updatePassword\" type=\"web\" newPassword=\"password\";}catch(any e){/*password already set*/}"
 					
 						+ "admin	action=\"" + (larType.equalsIgnoreCase("component") ? "updateComponentMapping" : "updateMapping") + "\""
 						+ "			type=\"web\""
-						+ "			physical=\"" + outputDirectory + "\""
+						+ "			physical=\"" + getLarOutputDirectory().getAbsolutePath() + "\""
 						+ "			archive=\"\""
 						+ "			virtual=\"" + larVirtualPath + "\""
 						+ "			password=\"password\""
@@ -164,9 +143,25 @@ public class LarMojo extends AbstractLuceeMojo {
 		}
 	}
 	
-	private void validate() throws MojoExecutionException {
+	/**
+	 * Throws exception on fatal invalidation, otherwise returns false for a non-fatal invalidation.
+	 * @return
+	 * @throws MojoExecutionException
+	 */
+	private boolean validate() throws MojoExecutionException {
 		if (!larType.equals("component") && !larType.equals("mapping"))
 			throw new MojoExecutionException("Invalid larType \""+larType+"\".  Valid options are \"component\" or \"mapping\".");
+		
+
+    	
+    	if (!getLarOutputDirectory().exists())
+    		if (getProject().getPackaging().equals("lar"))
+    			throw new MojoExecutionException("Missing source for Lucee archive");
+    		else
+    			return false;
+    	
+    	
+    	return true;
 	}
 	
 }
