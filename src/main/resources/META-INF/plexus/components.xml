@@ -1,5 +1,42 @@
 <component-set>
 	<components>
+
+		<!-- LCO -->
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>lco</role-hint>
+			<implementation>
+				org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
+			</implementation>
+			<configuration>
+				<phases>
+					<!-- use the basic jar lifecycle bindings, add additional executions 
+						in here if you want anything extra to be run -->
+					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+					<compile>org.apache.maven.plugins:maven-compiler-plugin:compile</compile>
+					<package>${project.groupId}:${project.artifactId}:${project.version}:lco-jar</package>
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>lco</role-hint>
+			<implementation>
+				org.apache.maven.artifact.handler.DefaultArtifactHandler
+			</implementation>
+			<configuration>
+				<!-- the extension used by Maven in the repository -->
+				<extension>lco</extension>
+				<!-- the type used when specifying dependencies etc. -->
+				<type>lco</type>
+				<!-- the packaging used when declaring an implementation of the packaging -->
+				<packaging>lco</packaging>
+			</configuration>
+		</component>
+		
 		<!-- LAR -->
 		<component>
 			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
@@ -12,15 +49,9 @@
 					<lifecycle>
 						<id>default</id>
 						<phases>
-							<initialize>
-								${project.groupId}:${project.artifactId}:${project.version}:initialize-lar
-							</initialize>
-							<process-resources>
-								org.apache.maven.plugins:maven-resources-plugin:resources,
-								${project.groupId}:${project.artifactId}:${project.version}:lar-sources
-							</process-resources>
-							<!-- <compile>${project.groupId}:${project.artifactId}:${project.version}:compile</compile> -->
-							<process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
+							<process-resources></process-resources>
+							<compile>${project.groupId}:${project.artifactId}:${project.version}:lar-copy-sources</compile>
+							<!-- <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources> -->
 							<!-- <test-compile>${project.groupId}:${project.artifactId}:${project.version}:testCompile</test-compile> -->
 							<test>org.apache.maven.plugins:maven-surefire-plugin:test</test>
 							<package>${project.groupId}:${project.artifactId}:${project.version}:lar</package>
@@ -50,7 +81,7 @@
 
 
 		<!-- LEX -->
-		<!-- <component>
+		<component>
 			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
 			<role-hint>lex</role-hint>
 			<implementation>
@@ -58,20 +89,21 @@
 			</implementation>
 			<configuration>
 				<phases>
-					use the basic jar lifecycle bindings, add additional executions 
-						in here if you want anything extra to be run
-					<process-resources>
-						org.apache.maven.plugins:maven-resources-plugin:resources
-					</process-resources>
+					<!-- use the basic jar lifecycle bindings, add additional executions 
+						in here if you want anything extra to be run -->
+					<initialize>${project.groupId}:${project.artifactId}:${project.version}:lex-config-project</initialize>
+					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+					<compile>
+						 org.apache.maven.plugins:maven-compiler-plugin:compile
+						,${project.groupId}:${project.artifactId}:${project.version}:lar-copy-sources
+					</compile>
 					<package>
-						org.apache.maven.plugins:maven-jar-plugin:jar
+						 ${project.groupId}:${project.artifactId}:${project.version}:lex-jar
+						,${project.groupId}:${project.artifactId}:${project.version}:lar
+						,${project.groupId}:${project.artifactId}:${project.version}:lex
 					</package>
-					<install>
-						org.apache.maven.plugins:maven-install-plugin:install
-					</install>
-					<deploy>
-						org.apache.maven.plugins:maven-deploy-plugin:deploy
-					</deploy>
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>
 			</configuration>
 		</component>
@@ -83,13 +115,15 @@
 				org.apache.maven.artifact.handler.DefaultArtifactHandler
 			</implementation>
 			<configuration>
-				the extension used by Maven in the repository
+				<!-- the extension used by Maven in the repository -->
 				<extension>lex</extension>
-				the type used when specifying dependencies etc.
+				<!-- the type used when specifying dependencies etc. -->
 				<type>lex</type>
-				the packaging used when declaring an implementation of the packaging
+				<!-- the packaging used when declaring an implementation of the packaging -->
 				<packaging>lex</packaging>
 			</configuration>
-		</component> -->
+		</component>
+
+
 	</components>
 </component-set>
