@@ -2,7 +2,10 @@ package org.jdsnet.maven.lucee.lar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -14,6 +17,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.jdsnet.maven.lucee.lar.util.CompileTimeMapping;
 
 @Mojo(
 	 name			= "lar"
@@ -65,6 +69,9 @@ public class LarMojo extends AbstractLarMojo {
 	@Parameter(defaultValue="false")
 	private boolean verbose;
 	
+	@Parameter
+	private List<CompileTimeMapping> larCompileTimeMappings = new ArrayList<>();
+	
 	public void execute() throws MojoExecutionException {
     	Log log = getLog();
     	
@@ -73,7 +80,8 @@ public class LarMojo extends AbstractLarMojo {
     	System.getProperties().put("lucee.server.dir", luceeRuntimeDirectory.getAbsolutePath());
     	System.getProperties().put("lucee.web.dir", luceeRuntimeDirectory.getAbsolutePath());
     	
-    	PrintStream devnull = new PrintStream(new ByteArrayOutputStream());
+    	ByteArrayOutputStream devnullout = new ByteArrayOutputStream();
+    	PrintStream devnull = new PrintStream(devnullout);
     	PrintStream out = System.out;
     	PrintStream err = System.err;
     	
@@ -85,6 +93,11 @@ public class LarMojo extends AbstractLarMojo {
     	log.info("Initializing Lucee execution environment...");
     	ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName("Lucee");
+		
+		for(String line : new String(devnullout.toByteArray()).split("[\n\r]+")) {
+			log.debug(line);
+		}
+		
 		log.info("done.");
 		
 		if (engine == null) {
@@ -101,7 +114,11 @@ public class LarMojo extends AbstractLarMojo {
 		try {
 			String finalFileName = getOutputDirectory().getAbsolutePath() + "/" + outputFileName + (getClassifier() != null ? "-" + getClassifier() : "");
 			log.info("Packaging Lucee Archive...");
-			engine.eval(  "try{admin	action=\"updatePassword\" type=\"web\" newPassword=\"password\";}catch(any e){/*password already set*/}"
+			
+			
+			StringBuilder cmd = new StringBuilder();
+			
+			cmd.append(   "try{admin	action=\"updatePassword\" type=\"web\" newPassword=\"password\";}catch(any e){/*password already set*/}"
 					
 						+ "admin	action=\"" + (larType.equalsIgnoreCase("component") ? "updateComponentMapping" : "updateMapping") + "\""
 						+ "			type=\"web\""
@@ -110,9 +127,25 @@ public class LarMojo extends AbstractLarMojo {
 						+ "			virtual=\"" + larVirtualPath + "\""
 						+ "			password=\"password\""
 						+ "			primary=\"physical\""
-						+ "			;"
-						
-						+ "admin	action=\"" + (larType.equalsIgnoreCase("component") ? "createComponentArchive" : "createArchive") + "\""
+						+ "			;\n");
+			
+			// add mappings necessary to compile the source
+			for (CompileTimeMapping m : larCompileTimeMappings) {
+				log.info("Add Mapping:");
+				log.info("  Virtual:  " + m.getMapping());
+				log.info("  Physical: " + m.getPath().getAbsolutePath());
+				cmd.append(	  "admin	action=\"updateMapping\""
+							+ "			type=\"web\""
+							+ "			physical=\"" + m.getPath().getAbsolutePath() + "\""
+							+ "			archive=\"\""
+							+ "			virtual=\"" + m.getMapping() + "\""
+							+ "			password=\"password\""
+							+ "			primary=\"physical\""
+							+ "			;\n");
+			}
+			
+			
+			cmd.append("admin	action=\"" + (larType.equalsIgnoreCase("component") ? "createComponentArchive" : "createArchive") + "\""
 						+ "			type=\"web\""
 						+ "			virtual=\"" + larVirtualPath + "\""
 						+ "			password=\"password\""
@@ -126,9 +159,10 @@ public class LarMojo extends AbstractLarMojo {
 						+ "			type=\"web\""
 						+ "			virtual=\"" + larVirtualPath + "\""
 						+ "			password=\"password\""
-						+ "			;"
-						
-						);
+						+ "			;");
+			
+			engine.eval(cmd.toString());
+			
 			log.info("done.");
 	    	
 			if (getProject().getPackaging().equals("lar")) {
