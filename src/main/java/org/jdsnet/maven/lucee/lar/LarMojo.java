@@ -161,6 +161,15 @@ public class LarMojo extends AbstractLarMojo {
 						+ "			password=\"password\""
 						+ "			;");
 			
+			// clean up mappings
+			for (CompileTimeMapping m : larCompileTimeMappings) {
+				cmd.append(	  "admin	action=\"removeMapping\""
+							+ "			type=\"web\""
+							+ "			virtual=\"" + m.getMapping() + "\""
+							+ "			password=\"password\""
+							+ "			;");
+			}
+			
 			engine.eval(cmd.toString());
 			
 			log.info("done.");
