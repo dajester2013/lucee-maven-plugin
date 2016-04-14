@@ -1,0 +1,20 @@
+<lifecycleMappingMetadata>
+  <pluginExecutions>
+    <pluginExecution>
+      <pluginExecutionFilter>
+        <goals>
+          <goal>lar-copy-sources</goal>
+          <goal>lar</goal>
+          <goal>lex</goal>
+          <goal>lex-config-project</goal>
+          <goal>lex-jar</goal>
+          <goal>lco</goal>
+          <goal>lucee-war-dependencies</goal>
+        </goals>
+      </pluginExecutionFilter>
+      <action>
+        <execute/>
+      </action>
+    </pluginExecution>
+  </pluginExecutions>
+</lifecycleMappingMetadata>

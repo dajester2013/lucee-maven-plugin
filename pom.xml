@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jdsnet.maven</groupId>
 	<artifactId>lucee-maven-plugin</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<dependencies>
@@ -64,6 +64,7 @@
 			<groupId>org.lucee</groupId>
 			<artifactId>lucee</artifactId>
 			<version>LATEST</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.bsf</groupId>

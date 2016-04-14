@@ -41,6 +41,9 @@ abstract public class AbstractLuceeMojo extends AbstractMojo {
 	@Parameter(defaultValue="${project.build.directory}", required=true)
 	private File outputDirectory;
 	
+
+	@Parameter(defaultValue="false")
+	private boolean failOnError;
 	
 
 	
@@ -62,6 +65,10 @@ abstract public class AbstractLuceeMojo extends AbstractMojo {
 	
 	protected File getOutputDirectory() {
 		return outputDirectory;
+	}
+	
+	protected boolean getFailOnError() {
+		return failOnError;
 	}
 	
 }

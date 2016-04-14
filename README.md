@@ -16,7 +16,7 @@ Usage:
   		<plugin>
   			<groupId>org.jdsnet.maven</groupId>
   			<artifactId>lucee-maven-plugin</artifactId>
-  			<version>0.0.1-SNAPSHOT</version>
+  			<version>0.0.2-SNAPSHOT</version>
   			<extensions>true</extensions>
   		</plugin>
   	</plugins>
