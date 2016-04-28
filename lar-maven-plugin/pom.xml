@@ -105,4 +105,5 @@
 			</plugin>
 		</plugins>
 	</build>
+	<name>Lucee Archive Maven Plugin</name>
 </project>

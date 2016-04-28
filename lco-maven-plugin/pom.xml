@@ -25,4 +25,5 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
+	<name>Lucee Core Archive Maven Plugin</name>
 </project>
