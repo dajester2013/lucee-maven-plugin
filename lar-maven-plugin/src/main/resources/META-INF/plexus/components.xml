@@ -1,0 +1,43 @@
+<component-set>
+	<components>
+	
+		<!-- LAR -->
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>lar</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<lifecycles>
+					<lifecycle>
+						<id>default</id>
+						<phases>
+							<process-resources></process-resources>
+							<compile>${project.groupId}:${project.artifactId}:${project.version}:lar-copy-sources</compile>
+							<test>org.apache.maven.plugins:maven-surefire-plugin:test</test>
+							<package>${project.groupId}:${project.artifactId}:${project.version}:lar
+							</package>
+							<install>org.apache.maven.plugins:maven-install-plugin:install
+							</install>
+							<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy
+							</deploy>
+						</phases>
+					</lifecycle>
+				</lifecycles>
+			</configuration>
+		</component>
+
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>bundle</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<type>lar</type>
+				<extension>lar</extension>
+				<packaging>lar</packaging>
+				<addedToClasspath>true</addedToClasspath>
+				<language>cfml,lucee</language>
+			</configuration>
+		</component>
+		
+	</components>
+</component-set>

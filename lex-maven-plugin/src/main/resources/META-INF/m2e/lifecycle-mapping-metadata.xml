@@ -1,0 +1,16 @@
+<lifecycleMappingMetadata>
+	<pluginExecutions>
+		<pluginExecution>
+			<pluginExecutionFilter>
+				<goals>
+					<goal>lex</goal>
+					<goal>lex-config-project</goal>
+					<goal>lex-jar</goal>
+				</goals>
+			</pluginExecutionFilter>
+			<action>
+				<execute />
+			</action>
+		</pluginExecution>
+	</pluginExecutions>
+</lifecycleMappingMetadata>

@@ -1,0 +1,50 @@
+<component-set>
+	<components>
+
+		<!-- LEX -->
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>lex</role-hint>
+			<implementation>
+				org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
+			</implementation>
+			<configuration>
+				<phases>
+					<!-- use the basic jar lifecycle bindings, add additional executions 
+						in here if you want anything extra to be run -->
+					<initialize>${project.groupId}:${project.artifactId}:${project.version}:lex-config-project</initialize>
+					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+					<compile>
+						 org.apache.maven.plugins:maven-compiler-plugin:compile
+						,${project.groupId}:lar-maven-plugin:${project.version}:lar-copy-sources
+					</compile>
+					<package>
+						 ${project.groupId}:${project.artifactId}:${project.version}:lex-jar
+						,${project.groupId}:lar-maven-plugin:${project.version}:lar
+						,${project.groupId}:${project.artifactId}:${project.version}:lex
+					</package>
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>lex</role-hint>
+			<implementation>
+				org.apache.maven.artifact.handler.DefaultArtifactHandler
+			</implementation>
+			<configuration>
+				<!-- the extension used by Maven in the repository -->
+				<extension>lex</extension>
+				<!-- the type used when specifying dependencies etc. -->
+				<type>lex</type>
+				<!-- the packaging used when declaring an implementation of the packaging -->
+				<packaging>lex</packaging>
+			</configuration>
+		</component>
+
+
+	</components>
+</component-set>
