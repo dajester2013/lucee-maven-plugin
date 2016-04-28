@@ -43,4 +43,5 @@
 		</dependency>
 	</dependencies>
 	<name>Lucee Extension Maven Plugin</name>
+	<packaging>maven-plugin</packaging>
 </project>

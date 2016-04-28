@@ -26,4 +26,5 @@
 		</dependency>
 	</dependencies>
 	<name>Lucee Core Archive Maven Plugin</name>
+	<packaging>maven-plugin</packaging>
 </project>
