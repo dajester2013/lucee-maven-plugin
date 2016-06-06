@@ -18,7 +18,7 @@ Place your Lucee/CFML source into `src/main/lucee`, and configure your pom.xml s
   		<plugin>
   			<groupId>org.jdsnet.maven.lucee</groupId>
   			<artifactId>lar-maven-plugin</artifactId>
-  			<version>0.1.0-SNAPSHOT</version>
+  			<version>0.1.1-SNAPSHOT</version>
   			<extensions>true</extensions>
   		</plugin>
   	</plugins>
