@@ -131,10 +131,10 @@ public class LarWebMojo extends AbstractLarMojo {
 			getLog().info("Open tomcat on port "+port);
 			tc.start();
 
+			String finalFileName = larOutputDirectory.getAbsolutePath() + "/" + outputFileName + (getClassifier() != null ? "-" + getClassifier() : "");
+				
 			try {
 				log.debug("Build url");
-				
-				String finalFileName = larOutputDirectory.getAbsolutePath() + "/" + outputFileName + (getClassifier() != null ? "-" + getClassifier() : "");
 				
 				StringBuffer mappingsJson = new StringBuffer("{");
 				boolean first=true;
@@ -187,7 +187,11 @@ public class LarWebMojo extends AbstractLarMojo {
 			tc.getServer().await();
 			
 			getLog().info("done.");
-			
+
+			if (getProject().getPackaging().equals("lar")) {
+				log.info("Attaching artifact " + finalFileName + ".lar");
+				getProject().getArtifact().setFile(new File(finalFileName + ".lar"));
+			}
 		} catch(Exception e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		} finally {
