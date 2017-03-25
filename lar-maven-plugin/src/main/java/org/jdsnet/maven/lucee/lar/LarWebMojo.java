@@ -12,10 +12,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import org.apache.catalina.Context;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -27,7 +25,6 @@ import org.apache.maven.shared.utils.io.FileUtils;
 import org.apache.maven.shared.utils.io.IOUtil;
 import org.jdsnet.maven.lucee.lar.util.CompileTimeMapping;
 
-import lucee.loader.engine.CFMLEngine;
 import lucee.loader.servlet.CFMLServlet;
 
 @Mojo(
@@ -75,7 +72,7 @@ public class LarWebMojo extends AbstractLarMojo {
 	private String outputFileName;
 	
 	/**
-	 * Whether to show verbose outut from the lucee build process.
+	 * Whether to show verbose output from the Lucee build process.
 	 */
 	@Parameter(defaultValue="false")
 	private boolean verbose;
@@ -86,7 +83,7 @@ public class LarWebMojo extends AbstractLarMojo {
 	@Parameter
 	private List<CompileTimeMapping> larCompileTimeMappings = new ArrayList<>();
 	
-	public void execute() throws MojoExecutionException {
+	synchronized public void execute() throws MojoExecutionException {
 		final Log log = getLog();
 		
 		if (!validate()) return;
@@ -107,11 +104,15 @@ public class LarWebMojo extends AbstractLarMojo {
     	log.info("Initializing Lucee execution environment...");
     	
 		try {
-			File webroot = new File(larOutputDirectory + "/lar-build-scripts/");
+			File tcBase = new File(luceeRuntimeDirectory, "/tc-base");
+			if (!tcBase.exists()) tcBase.mkdirs();
+			
+			File webroot = new File(tcBase, "/lar-build-scripts");
+			if (!webroot.exists()) webroot.mkdirs();
 			
 			// TODO: move this to function
 			URL res = LarWebMojo.class.getResource("/lar-build-scripts/generate.cfm");
-			File outFile = new File(larOutputDirectory, "/lar-build-scripts/generate.cfm");
+			File outFile = new File(webroot, "generate.cfm");
 			if (outFile.exists()) outFile.delete();
 			FileUtils.copyURLToFile(res, outFile);
 			
@@ -124,11 +125,13 @@ public class LarWebMojo extends AbstractLarMojo {
 			Context ctx = tc.addContext("/lar", webroot.getAbsolutePath());
 			
 			// add cfml servlet
-			Tomcat	.addServlet(ctx, "CFMLServlet", new CFMLServlet())
-					.setLoadOnStartup(1);
-			ctx		.addServletMapping("*.cfm", "CFMLServlet");
+			Wrapper servletWrapper = Tomcat.addServlet(ctx, "CFMLServlet", new CFMLServlet());
+			
+			servletWrapper.setLoadOnStartup(1);
+			servletWrapper.addMapping("*.cfm");
 			
 			getLog().info("Open tomcat on port "+port);
+			tc.init();
 			tc.start();
 
 			String finalFileName = larOutputDirectory.getAbsolutePath() + "/" + outputFileName + (getClassifier() != null ? "-" + getClassifier() : "");
