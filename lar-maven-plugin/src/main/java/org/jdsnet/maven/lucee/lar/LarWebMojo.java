@@ -34,6 +34,7 @@ import lucee.loader.servlet.CFMLServlet;
 	,requiresDependencyCollection = ResolutionScope.COMPILE
 )
 public class LarWebMojo extends AbstractLarMojo {
+	private final static String LAR_RESOURCES_PATH = "/lar-build-scripts";
 	
 	/**
 	 * Whether or not to include source cfc/cfm/lucee/lc files in the final lar file.
@@ -89,7 +90,8 @@ public class LarWebMojo extends AbstractLarMojo {
 		if (!validate()) return;
 
     	System.getProperties().put("lucee.server.dir", luceeRuntimeDirectory.getAbsolutePath());
-    	System.getProperties().put("lucee.web.dir", luceeRuntimeDirectory.getAbsolutePath());
+    	// since the webroot is now inside the rundir, let lucee build the webdir under the context path
+    	//System.getProperties().put("lucee.web.dir", luceeRuntimeDirectory.getAbsolutePath());
 
     	ByteArrayOutputStream devnullout = new ByteArrayOutputStream();
     	PrintStream devnull = new PrintStream(devnullout);
@@ -104,20 +106,16 @@ public class LarWebMojo extends AbstractLarMojo {
     	log.info("Initializing Lucee execution environment...");
     	
 		try {
-			File tcBase = new File(luceeRuntimeDirectory, "/tc-base");
+			int port = getOpenPort();
+			Tomcat tc = new Tomcat();
+			
+			File tcBase = new File(luceeRuntimeDirectory, "/tc-base-" + port);
 			if (!tcBase.exists()) tcBase.mkdirs();
 			
 			File webroot = new File(tcBase, "/lar-build-scripts");
 			if (!webroot.exists()) webroot.mkdirs();
 			
-			// TODO: move this to function
-			URL res = LarWebMojo.class.getResource("/lar-build-scripts/generate.cfm");
-			File outFile = new File(webroot, "generate.cfm");
-			if (outFile.exists()) outFile.delete();
-			FileUtils.copyURLToFile(res, outFile);
-			
-			final int port = getOpenPort();
-			final Tomcat tc = new Tomcat();
+			populateWebroot(webroot);
 			
 			tc.setBaseDir(larOutputDirectory.getAbsolutePath());
 			tc.setPort(port);
@@ -135,7 +133,7 @@ public class LarWebMojo extends AbstractLarMojo {
 			tc.start();
 
 			String finalFileName = larOutputDirectory.getAbsolutePath() + "/" + outputFileName + (getClassifier() != null ? "-" + getClassifier() : "");
-				
+			boolean cancelshutdown=false;
 			try {
 				log.debug("Build url");
 				
@@ -181,10 +179,18 @@ public class LarWebMojo extends AbstractLarMojo {
 				for (String line : response.split("[\r\n]+")) {
 					log.info(line);
 				}
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage(), e);
+			} catch(Exception e) {
+				if (System.getProperty("larweb.debug.tomcat","false").equals("true")) {
+					cancelshutdown = true;
+				} else {
+					throw(e);
+				}
 			} finally {
-				try { tc.stop(); } catch (Exception tce) {log.debug("Error shutting down");}
+				try { 
+					if (!cancelshutdown) tc.stop(); 
+				} catch (Exception tce) {
+					log.debug("Error shutting down");
+				}
 			}
 			
 			tc.getServer().await();
@@ -203,6 +209,18 @@ public class LarWebMojo extends AbstractLarMojo {
 		}
 	}
 	
+	/**
+	 * writes cfm files to the runtime webroot
+	 * @param webroot
+	 * @throws IOException
+	 */
+	private void populateWebroot(File webroot) throws IOException {
+		URL res = LarWebMojo.class.getResource(LAR_RESOURCES_PATH + "/generate.cfm");
+		File outFile = new File(webroot, "generate.cfm");
+		if (outFile.exists()) outFile.delete();
+		FileUtils.copyURLToFile(res, outFile);
+	}
+
 	/**
 	 * Throws exception on fatal invalidation, otherwise returns false for a non-fatal invalidation.
 	 * @return

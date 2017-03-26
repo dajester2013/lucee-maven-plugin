@@ -15,7 +15,7 @@
 		<system>GitHub</system>
 		<url>http://github.com/dajester2013/lucee-maven-plugins/issues</url>
 	</issueManagement>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -42,10 +42,48 @@
 			<version>3.3.0</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.lucee</groupId>
-			<artifactId>lucee</artifactId>
-			<version>[5.0,5.2)</version>
-		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.lucee</groupId>
+				<artifactId>lucee</artifactId>
+				<version>[5.0,5.2)</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-core</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-logging-juli</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-jasper</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat-jasper</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat-jasper-el</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat-jsp-api</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
 </project>

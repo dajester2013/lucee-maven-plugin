@@ -1,5 +1,16 @@
 <cfsetting enablecfoutputonly="true">
 
+<cfoutput>
+
+
+==========================================================
+== lar-maven-plugin / generate.cfm                      ==
+== lucee version : #server.lucee.version##repeatString(' ', 37-len(tostring(server.lucee.version)))#==
+==========================================================
+
+
+</cfoutput>
+
 <cfparam name="url.type" type="string" default="component">
 <cfparam name="url.phys" type="string">
 <cfparam name="url.virt" type="string">
@@ -42,7 +53,7 @@
 <cfadmin	action			= "#url.type == "component" ? "createComponentArchive" : "createArchive"#"
 			type			= "web"
 			password		= "password"
-			
+
 			file			= "#url.larFile#.lar"
 			virtual			= "#url.virt#"
 			addCFMLFiles	= "#url.includeSource#"
@@ -58,7 +69,7 @@
 			virtual			= "#url.virt#"
 			password		= "password"
 			/>
-			
+
 <cfloop collection="#url.mappings#" item="mVirt">
 	<cfadmin	action		= "removeMapping"
 				type		= "web"
