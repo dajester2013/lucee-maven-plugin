@@ -206,7 +206,7 @@ public class LarCopySourcesMojo extends AbstractLarMojo {
 			}
 
 			MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution(getResources(),
-					getLarStagingDir(), getProject(), encoding, filters, Collections.<String> emptyList(),
+					getCFMLOutputDir(), getProject(), encoding, filters, Collections.<String> emptyList(),
 					getSession());
 
 			mavenResourcesExecution.setEscapeWindowsPaths(escapeWindowsPaths);

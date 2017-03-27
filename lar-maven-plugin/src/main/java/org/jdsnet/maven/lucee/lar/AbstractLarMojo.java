@@ -36,10 +36,10 @@ abstract public class AbstractLarMojo extends AbstractMojo {
     private MavenSession session;
     
 	/**
-	 * Where to output the built artifact.
+	 * Where to output processed CFML files.
 	 */
-	@Parameter(defaultValue="${project.build.directory}/lar", required=true)
-	private File larStagingDir;
+	@Parameter(defaultValue="${project.build.directory}/cfml", required=true)
+	private File cfmlOutputDir;
 	
 
 	@Parameter(defaultValue="false")
@@ -63,8 +63,8 @@ abstract public class AbstractLarMojo extends AbstractMojo {
 		return session;
 	}
 	
-	protected File getLarStagingDir() {
-		return larStagingDir;
+	protected File getCFMLOutputDir() {
+		return cfmlOutputDir;
 	}
 	
 }

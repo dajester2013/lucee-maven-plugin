@@ -157,7 +157,7 @@ public class LarWebMojo extends AbstractLarMojo {
 					 "http://localhost:%d/lar/generate.cfm?type=%s&phys=%s&virt=%s&mappings=%s&larFile=%s&includeSource=%s&includeStatic=%s"
 					,port
 					,larType
-					,URLEncoder.encode(getLarStagingDir().getAbsolutePath(), "UTF-8")
+					,URLEncoder.encode(getCFMLOutputDir().getAbsolutePath(), "UTF-8")
 					,URLEncoder.encode(larVirtualPath, "UTF-8")
 					,URLEncoder.encode(mappingsJson.toString(), "UTF-8")
 					,URLEncoder.encode(finalFileName, "UTF-8")
@@ -232,7 +232,7 @@ public class LarWebMojo extends AbstractLarMojo {
 		
 
 		
-		if (!getLarStagingDir().exists())
+		if (!getCFMLOutputDir().exists())
 			if (getProject().getPackaging().equals("lar"))
 				throw new MojoExecutionException("Missing source for Lucee archive");
 			else

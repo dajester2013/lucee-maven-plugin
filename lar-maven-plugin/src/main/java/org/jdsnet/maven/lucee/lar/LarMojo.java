@@ -124,7 +124,7 @@ public class LarMojo extends AbstractLarMojo {
 					
 						+ "admin	action=\"" + (larType.equalsIgnoreCase("component") ? "updateComponentMapping" : "updateMapping") + "\""
 						+ "			type=\"web\""
-						+ "			physical=\"" + getLarStagingDir().getAbsolutePath() + "\""
+						+ "			physical=\"" + getCFMLOutputDir().getAbsolutePath() + "\""
 						+ "			archive=\"\""
 						+ "			virtual=\"" + larVirtualPath + "\""
 						+ "			password=\"password\""
@@ -199,7 +199,7 @@ public class LarMojo extends AbstractLarMojo {
 		
 
     	
-    	if (!getLarStagingDir().exists())
+    	if (!getCFMLOutputDir().exists())
     		if (getProject().getPackaging().equals("lar"))
     			throw new MojoExecutionException("Missing source for Lucee archive");
     		else
