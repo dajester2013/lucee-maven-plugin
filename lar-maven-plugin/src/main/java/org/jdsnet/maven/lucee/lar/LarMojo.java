@@ -51,22 +51,10 @@ public class LarMojo extends AbstractLarMojo {
 	private String larVirtualPath;
 	
 	/**
-	 * Where to place the lucee runtime files necessary for the compilation phase
-	 */
-	@Parameter(property="lucee.runtime.dir", defaultValue="${project.build.directory}/lucee", required=true)
-	private File luceeRuntimeDirectory;
-	
-	/**
 	 * The lar's file name.
 	 */
 	@Parameter(defaultValue="${project.build.finalName}", required=true)
 	private String outputFileName;
-	
-	/**
-	 * Whether to show verbose outut from the lucee build process.
-	 */
-	@Parameter(defaultValue="false")
-	private boolean verbose;
 	
 	@Parameter(defaultValue="${project.build.directory}")
 	private File larOutputDirectory;
@@ -79,15 +67,15 @@ public class LarMojo extends AbstractLarMojo {
     	
     	if (!validate()) return;
     	
-    	System.getProperties().put("lucee.server.dir", luceeRuntimeDirectory.getAbsolutePath());
-    	System.getProperties().put("lucee.web.dir", luceeRuntimeDirectory.getAbsolutePath());
+    	System.getProperties().put("lucee.server.dir", getLuceeRuntimeDirectory().getAbsolutePath());
+    	System.getProperties().put("lucee.web.dir", getLuceeRuntimeDirectory().getAbsolutePath());
     	
     	ByteArrayOutputStream devnullout = new ByteArrayOutputStream();
     	PrintStream devnull = new PrintStream(devnullout);
     	PrintStream out = System.out;
     	PrintStream err = System.err;
     	
-    	if (!verbose) {
+    	if (!getVerbose()) {
 	    	System.setOut(devnull);
 	    	System.setErr(devnull);
     	}

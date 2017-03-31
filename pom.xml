@@ -34,6 +34,7 @@
 		<module>lco-maven-plugin</module>
 		<module>lex-maven-plugin</module>
 		<module>lucee-maven-support</module>
+		<module>lucee-testing-plugin</module>
 	</modules>
 	<dependencies>
 		<dependency>

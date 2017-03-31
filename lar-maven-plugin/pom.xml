@@ -50,6 +50,12 @@
 		<dependency>
 			<groupId>org.lucee</groupId>
 			<artifactId>lucee</artifactId>
+			<version>5.1.2.24</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jdsnet.maven.lucee</groupId>
+			<artifactId>lucee-testing-plugin</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

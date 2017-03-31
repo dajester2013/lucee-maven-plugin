@@ -13,12 +13,11 @@
 						<phases>
 							<process-resources></process-resources>
 							<compile>${project.groupId}:${project.artifactId}:${project.version}:lar-copy-sources</compile>
-							<test>org.apache.maven.plugins:maven-surefire-plugin:test</test>
+							<test-compile>${project.groupId}:${project.artifactId}:${project.version}:cfml-test-prep</test-compile>
+							<test>${project.groupId}:${project.artifactId}:${project.version}:cfml-test</test>
 							<package>${project.groupId}:${project.artifactId}:${project.version}:lar-web</package>
-							<install>org.apache.maven.plugins:maven-install-plugin:install
-							</install>
-							<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy
-							</deploy>
+							<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+							<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 						</phases>
 					</lifecycle>
 				</lifecycles>

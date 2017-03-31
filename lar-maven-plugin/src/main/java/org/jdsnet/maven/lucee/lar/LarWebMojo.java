@@ -61,22 +61,10 @@ public class LarWebMojo extends AbstractLarMojo {
 	private String larVirtualPath;
 	
 	/**
-	 * Where to place the lucee runtime files necessary for the compilation phase
-	 */
-	@Parameter(property="lucee.runtime.dir", defaultValue="${project.build.directory}/lucee", required=true)
-	private File luceeRuntimeDirectory;
-	
-	/**
 	 * The lar's file name.
 	 */
 	@Parameter(defaultValue="${project.build.finalName}", required=true)
 	private String outputFileName;
-	
-	/**
-	 * Whether to show verbose output from the Lucee build process.
-	 */
-	@Parameter(defaultValue="false")
-	private boolean verbose;
 	
 	@Parameter(defaultValue="${project.build.directory}")
 	private File larOutputDirectory;
@@ -89,16 +77,16 @@ public class LarWebMojo extends AbstractLarMojo {
 		
 		if (!validate()) return;
 
-    	System.getProperties().put("lucee.server.dir", luceeRuntimeDirectory.getAbsolutePath());
+    	System.getProperties().put("lucee.server.dir", getLuceeRuntimeDirectory().getAbsolutePath());
     	// since the webroot is now inside the rundir, let lucee build the webdir under the context path
-    	//System.getProperties().put("lucee.web.dir", luceeRuntimeDirectory.getAbsolutePath());
+    	//System.getProperties().put("lucee.web.dir", getLuceeRuntimeDirectory().getAbsolutePath());
 
     	ByteArrayOutputStream devnullout = new ByteArrayOutputStream();
     	PrintStream devnull = new PrintStream(devnullout);
     	PrintStream out = System.out;
     	PrintStream err = System.err;
     	
-    	if (!verbose) {
+    	if (!getVerbose()) {
 	    	System.setOut(devnull);
 	    	System.setErr(devnull);
     	}
@@ -106,18 +94,22 @@ public class LarWebMojo extends AbstractLarMojo {
     	log.info("Initializing Lucee execution environment...");
     	
 		try {
-			int port = getOpenPort();
-			Tomcat tc = new Tomcat();
+			/*int port = getOpenPort();
+			Tomcat tc = new Tomcat();*/
 			
-			File tcBase = new File(luceeRuntimeDirectory, "/tc-base-" + port);
-			if (!tcBase.exists()) tcBase.mkdirs();
+			/*File tcBase = new File(getLuceeRuntimeDirectory(), "/tc-base-" + port);
+			if (!tcBase.exists()) tcBase.mkdirs();*/
 			
-			File webroot = new File(tcBase, "/lar-build-scripts");
+			Tomcat tc = getTomcat();
+			
+			File webroot = new File(getTCBase(), "/lar-build-scripts");
 			if (!webroot.exists()) webroot.mkdirs();
 			
 			populateWebroot(webroot);
 			
-			tc.setBaseDir(larOutputDirectory.getAbsolutePath());
+			startLuceeContext("/lar", webroot, getLuceeRuntimeDirectory());
+			
+			/*tc.setBaseDir(larOutputDirectory.getAbsolutePath());
 			tc.setPort(port);
 			
 			Context ctx = tc.addContext("/lar", webroot.getAbsolutePath());
@@ -130,7 +122,7 @@ public class LarWebMojo extends AbstractLarMojo {
 			
 			getLog().info("Open tomcat on port "+port);
 			tc.init();
-			tc.start();
+			tc.start();*/
 
 			String finalFileName = larOutputDirectory.getAbsolutePath() + "/" + outputFileName + (getClassifier() != null ? "-" + getClassifier() : "");
 			boolean cancelshutdown=false;
@@ -155,7 +147,7 @@ public class LarWebMojo extends AbstractLarMojo {
 				
 				URL url = new URL(String.format(
 					 "http://localhost:%d/lar/generate.cfm?type=%s&phys=%s&virt=%s&mappings=%s&larFile=%s&includeSource=%s&includeStatic=%s"
-					,port
+					,getTCPort()
 					,larType
 					,URLEncoder.encode(getCFMLOutputDir().getAbsolutePath(), "UTF-8")
 					,URLEncoder.encode(larVirtualPath, "UTF-8")
@@ -192,9 +184,6 @@ public class LarWebMojo extends AbstractLarMojo {
 					log.debug("Error shutting down");
 				}
 			}
-			
-			tc.getServer().await();
-			
 			getLog().info("done.");
 
 			if (getProject().getPackaging().equals("lar")) {
@@ -206,6 +195,7 @@ public class LarWebMojo extends AbstractLarMojo {
 		} finally {
 	    	System.setOut(out);
 	    	System.setErr(err);
+	    	
 		}
 	}
 	
