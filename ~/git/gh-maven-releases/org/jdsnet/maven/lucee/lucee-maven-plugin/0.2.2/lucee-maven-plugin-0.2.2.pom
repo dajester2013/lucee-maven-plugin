@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jdsnet.maven.lucee</groupId>
+	<artifactId>lucee-maven-plugin</artifactId>
+	<version>0.2.2</version>
+	<packaging>pom</packaging>
+	<name>Lucee Maven Plugins</name>
+	<url>http://github.com/dajester2013/lucee-maven-plugin</url>
+	<description>Collection of Lucee-related plugins for Maven.</description>
+	<scm>
+		<url>http://github.com/dajester2013/lucee-maven-plugins</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>http://github.com/dajester2013/lucee-maven-plugins/issues</url>
+	</issueManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<modules>
+		<module>lar-maven-plugin</module>
+		<module>lco-maven-plugin</module>
+		<module>lex-maven-plugin</module>
+		<module>lucee-maven-support</module>
+	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven.plugin-testing</groupId>
+			<artifactId>maven-plugin-testing-harness</artifactId>
+			<version>3.3.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.lucee</groupId>
+				<artifactId>lucee</artifactId>
+				<version>[5.0,5.2)</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-core</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-logging-juli</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-jasper</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat-jasper</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat-jasper-el</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat-jsp-api</artifactId>
+				<version>[8.5,8.6)</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+</project>

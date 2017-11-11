@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <plugins>
+    <plugin>
+      <name>Lucee Archive Maven Plugin</name>
+      <prefix>lar</prefix>
+      <artifactId>lar-maven-plugin</artifactId>
+    </plugin>
+    <plugin>
+      <name>Lucee Core Archive Maven Plugin</name>
+      <prefix>lco</prefix>
+      <artifactId>lco-maven-plugin</artifactId>
+    </plugin>
+    <plugin>
+      <name>Lucee Extension Maven Plugin</name>
+      <prefix>lex</prefix>
+      <artifactId>lex-maven-plugin</artifactId>
+    </plugin>
+  </plugins>
+</metadata>
