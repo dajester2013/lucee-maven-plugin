@@ -28,11 +28,8 @@
 				org.apache.maven.artifact.handler.DefaultArtifactHandler
 			</implementation>
 			<configuration>
-				<!-- the extension used by Maven in the repository -->
-				<extension>lco</extension>
-				<!-- the type used when specifying dependencies etc. -->
+				<extension>jar</extension>
 				<type>lco</type>
-				<!-- the packaging used when declaring an implementation of the packaging -->
 				<packaging>lco</packaging>
 			</configuration>
 		</component>

@@ -31,7 +31,7 @@
 			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
 			<configuration>
 				<type>lar</type>
-				<extension>lar</extension>
+				<extension>zip</extension>
 				<packaging>lar</packaging>
 				<addedToClasspath>true</addedToClasspath>
 				<language>cfml,lucee</language>

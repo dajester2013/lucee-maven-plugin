@@ -37,7 +37,7 @@
 			</implementation>
 			<configuration>
 				<!-- the extension used by Maven in the repository -->
-				<extension>lex</extension>
+				<extension>zip</extension>
 				<!-- the type used when specifying dependencies etc. -->
 				<type>lex</type>
 				<!-- the packaging used when declaring an implementation of the packaging -->
