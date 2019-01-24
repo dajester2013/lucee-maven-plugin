@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jdsnet.maven.lucee</groupId>
 		<artifactId>lucee-maven-plugin</artifactId>
-		<version>0.2.2</version>
+		<version>0.2.3</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>lar-maven-plugin</artifactId>
@@ -99,7 +99,7 @@
 					</filterProperties>
 				</configuration>
 
-				<executions>
+				<!-- <executions>
 					<execution>
 						<phase>integration-test</phase>
 						<goals>
@@ -108,7 +108,7 @@
 							<goal>verify</goal>
 						</goals>
 					</execution>
-				</executions>
+				</executions> -->
 			</plugin>
 		</plugins>
 		<pluginManagement>

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.net.URLConnection;
@@ -25,6 +26,7 @@ import org.apache.maven.shared.utils.io.FileUtils;
 import org.apache.maven.shared.utils.io.IOUtil;
 import org.jdsnet.maven.lucee.lar.util.CompileTimeMapping;
 
+import lucee.loader.engine.CFMLEngineFactory;
 import lucee.loader.servlet.CFMLServlet;
 
 @Mojo(
@@ -122,6 +124,8 @@ public class LarWebMojo extends AbstractLarMojo {
 			
 			Context ctx = tc.addContext("/lar", webroot.getAbsolutePath());
 			
+			
+			
 			// add cfml servlet
 			Wrapper servletWrapper = Tomcat.addServlet(ctx, "CFMLServlet", new CFMLServlet());
 			
@@ -194,6 +198,11 @@ public class LarWebMojo extends AbstractLarMojo {
 			}
 			
 			tc.getServer().await();
+			
+			/* clear out the CFMLEngineFactory after each run...because. */
+			Field f = CFMLEngineFactory.class.getDeclaredField("singelton");
+			f.setAccessible(true);
+			f.set(null, null);
 			
 			getLog().info("done.");
 
