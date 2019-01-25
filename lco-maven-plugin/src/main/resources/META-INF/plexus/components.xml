@@ -28,7 +28,7 @@
 				org.apache.maven.artifact.handler.DefaultArtifactHandler
 			</implementation>
 			<configuration>
-				<extension>jar</extension>
+				<extension>lco</extension>
 				<type>lco</type>
 				<packaging>lco</packaging>
 			</configuration>
