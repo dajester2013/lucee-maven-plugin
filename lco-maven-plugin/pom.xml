@@ -5,7 +5,7 @@
 		<groupId>org.jdsnet.maven.lucee</groupId>
 		<artifactId>lucee-maven-plugin</artifactId>
 		<version>0.2.4</version>
-		<relativePath>..</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>lco-maven-plugin</artifactId>
 	<dependencies>

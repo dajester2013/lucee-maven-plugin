@@ -7,6 +7,8 @@
 		<version>0.2.4</version>
 		<relativePath>..</relativePath>
 	</parent>
+	<name>Lucee Extension Maven Plugin</name>
+	<packaging>maven-plugin</packaging>
 	<artifactId>lex-maven-plugin</artifactId>
 	<dependencies>
 		<dependency>
@@ -42,6 +44,4 @@
 			<version>1.10</version>
 		</dependency>
 	</dependencies>
-	<name>Lucee Extension Maven Plugin</name>
-	<packaging>maven-plugin</packaging>
 </project>

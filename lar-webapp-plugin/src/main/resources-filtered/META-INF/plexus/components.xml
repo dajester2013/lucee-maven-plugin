@@ -1,0 +1,20 @@
+<component-set>
+	<components>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<lifecycles>
+					<lifecycle>
+						<id>default</id>
+						<phases>
+							<generate-resources>
+								org.jdsnet.maven.lucee:lar-webapp-plugin:${project.version}:lar-war-attach
+							</generate-resources>
+						</phases>
+					</lifecycle>
+				</lifecycles>
+			</configuration>
+		</component>
+	</components>
+</component-set>
