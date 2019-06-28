@@ -140,9 +140,11 @@ public class LarWarMojo extends AbstractMojo {
 
 				Element cfcEl = (Element) cfg.getElementsByTagName("component").item(0);
 				Element ctagEl = (Element) cfg.getElementsByTagName("custom-tag").item(0);
+				Element mapEl = (Element) cfg.getElementsByTagName("mappings").item(0);
 
 				HashSet<String> cfcMappings = getMappings(cfcEl);
 				HashSet<String> ctagMappings = getMappings(ctagEl);
+				HashSet<String> regMappings = getMappings(mapEl);
 				
 				File libDir = new File(webappDirectory, "WEB-INF/lib/");
 				if (!libDir.exists())
@@ -186,6 +188,12 @@ public class LarWarMojo extends AbstractMojo {
 									cfcEl.appendChild(mapping);
 								} else if (coalesce(attrs.getValue("mapping-type"), "").equals("custom-tag")) {
 									if (ctagMappings.contains(archivePath)) {
+										lar.close();
+										return;
+									}
+									ctagEl.appendChild(mapping);
+								} else if (coalesce(attrs.getValue("mapping-type"), "").equals("regular")) {
+									if (regMappings.contains(archivePath)) {
 										lar.close();
 										return;
 									}
