@@ -197,7 +197,7 @@ public class LarWarMojo extends AbstractMojo {
 										lar.close();
 										return;
 									}
-									ctagEl.appendChild(mapping);
+									mapEl.appendChild(mapping);
 								}
 
 								lar.close();
