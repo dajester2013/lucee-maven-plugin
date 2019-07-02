@@ -6,10 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -22,11 +20,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -146,7 +142,7 @@ public class LarWarMojo extends AbstractMojo {
 				HashSet<String> ctagMappings = getMappings(ctagEl);
 				HashSet<String> regMappings = getMappings(mapEl);
 				
-				File libDir = new File(webappDirectory, "WEB-INF/lib/");
+				File libDir = new File(webappDirectory, "WEB-INF/lucee/lib/");
 				if (!libDir.exists())
 					libDir.mkdirs();
 				
@@ -168,7 +164,7 @@ public class LarWarMojo extends AbstractMojo {
 
 								Attributes attrs = lar.getManifest().getMainAttributes();
 
-								String archivePath = "{web-root-directory}/WEB-INF/lib/" + a.getFile().getName();
+								String archivePath = "{lucee-web}/lib/" + a.getFile().getName();
 								
 								Element mapping = cfg.createElement("mapping");
 								mapping.setAttribute("virtual", 
