@@ -59,7 +59,9 @@ public class LarWarMojo extends AbstractMojo {
 		File lwc = getConfigDestination();
 		
 		if (!lwc.exists()) {
-			lwc.getParentFile().mkdirs();
+			// just because the file doesn't exist doesn't mean the parent folder also does not exist.
+			if (!lwc.getParentFile().exists())
+				lwc.getParentFile().mkdirs();
 
 			try {
 				if (sourceLuceeWebConfig.exists()) {
