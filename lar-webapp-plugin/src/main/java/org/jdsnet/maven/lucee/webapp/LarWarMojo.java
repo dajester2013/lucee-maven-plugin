@@ -79,7 +79,7 @@ public class LarWarMojo extends AbstractMojo {
 							if (e.getName().equals("resource/config/web.xml")) {
 								FileOutputStream lwcOut = new FileOutputStream(lwc);
 		
-								byte[] buf = new byte[1024];
+								byte[] buf = new byte[4096];
 								int len;
 								while ((len = zin.read(buf)) != -1) {
 									lwcOut.write(buf, 0, len);
@@ -151,28 +151,28 @@ public class LarWarMojo extends AbstractMojo {
 				project.getArtifacts().stream()
 				
 						// filter artifacts for runtime/compile scoped lar artifacts
-						.filter(a ->
-								a.getType().equals("lar")
+						.filter(artifact ->
+								artifact.getType().equals("lar")
 							&&	(
-									a.getScope().equals("runtime")
-								|| 	a.getScope().equals("compile")
+									artifact.getScope().equals("runtime")
+								|| 	artifact.getScope().equals("compile")
 							)
 						)
 						
 						// process a component or custom tag mapping for the lucee config file
-						.forEach(a -> {
+						.forEach(artifact->{
 							try {
-								JarFile lar = new JarFile(a.getFile());
+								JarFile lar = new JarFile(artifact.getFile());
 
 								Attributes attrs = lar.getManifest().getMainAttributes();
 
-								String archivePath = "{lucee-web}/lib/" + a.getFile().getName();
+								String archivePath = "{lucee-web}/lib/" + artifact.getFile().getName();
 								
 								Element mapping = cfg.createElement("mapping");
 								mapping.setAttribute("virtual", 
 									coalesce(
 										attrs.getValue("mapping-virtual-path"),
-										"/"+a.getFile().getName()
+										"/"+artifact.getFile().getName()
 									)
 								);
 								mapping.setAttribute("archive", archivePath);
@@ -200,7 +200,7 @@ public class LarWarMojo extends AbstractMojo {
 
 								lar.close();
 								
-								FileUtils.copyFileToDirectory(a.getFile(), libDir);
+								FileUtils.copyFileToDirectory(artifact.getFile(), libDir);
 							} catch (Exception e) {
 								throw new RuntimeException(e);
 							}
