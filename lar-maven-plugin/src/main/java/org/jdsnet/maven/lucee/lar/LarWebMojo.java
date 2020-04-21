@@ -16,6 +16,7 @@ import java.util.List;
 import org.apache.catalina.Context;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.TomcatURLStreamHandlerFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -108,6 +109,8 @@ public class LarWebMojo extends AbstractLarMojo {
     	log.info("Initializing Lucee execution environment...");
     	
 		try {
+			TomcatURLStreamHandlerFactory.disable();
+			
 			int port = getOpenPort();
 			Tomcat tc = new Tomcat();
 			
@@ -203,7 +206,7 @@ public class LarWebMojo extends AbstractLarMojo {
 			Field f = CFMLEngineFactory.class.getDeclaredField("singelton");
 			f.setAccessible(true);
 			f.set(null, null);
-			
+
 			getLog().info("done.");
 
 			if (getProject().getPackaging().equals("lar")) {

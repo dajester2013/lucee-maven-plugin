@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jdsnet.maven.lucee</groupId>
 		<artifactId>lucee-maven-plugin</artifactId>
-		<version>0.2.7</version>
+		<version>0.2.8</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>lucee-maven-support</artifactId>

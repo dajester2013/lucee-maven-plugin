@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -21,7 +23,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
- 
+
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -86,6 +88,12 @@ public class LuceeConfigurator {
 
 			return _el;
 		}
+		
+		public void appendTo(Element el) {
+			Element _el = this.createElement(el.getOwnerDocument());
+			el.appendChild(_el);
+		}
+
 
 		public boolean equals(Mapping m) {
 			if (	m.archive == this.archive
@@ -202,8 +210,12 @@ public class LuceeConfigurator {
 			}
 		}
 
-		Element mappingEl = mapping.createElement(config);
-		parent.appendChild(mappingEl);
+		mapping.appendTo(parent);
+	}
+
+	public Set<Mapping> getMappings(String type) {
+		Element parent = (Element)config.getElementsByTagName(type).item(0);
+		return readMappings(parent);
 	}
 
 	public void addArtifactMapping(Artifact a) throws IOException {
@@ -237,7 +249,7 @@ public class LuceeConfigurator {
 					break;
 
 				default:
-					System.out.println("BARF");
+					System.out.println("Invalid mapping type "+attrs.getValue("mapping-type"));
 					System.exit(100);
 			}
 			
