@@ -1,4 +1,5 @@
 <cfsetting enablecfoutputonly="true">
+<cfsetting requesttimeout="864000"> <!--- surely a build will complete within 10 days... --->
 
 <cfoutput>
 
