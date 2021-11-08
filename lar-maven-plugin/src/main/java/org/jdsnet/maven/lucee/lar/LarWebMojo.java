@@ -114,7 +114,7 @@ public class LarWebMojo extends AbstractLarMojo {
 			int port = getOpenPort();
 			Tomcat tc = new Tomcat();
 			
-			File tcBase = new File(luceeRuntimeDirectory, "/tc-base-" + port);
+			File tcBase = new File(luceeRuntimeDirectory, "/lar-maven-runtime");
 			if (!tcBase.exists()) tcBase.mkdirs();
 			
 			File webroot = new File(tcBase, "/lar-build-scripts");

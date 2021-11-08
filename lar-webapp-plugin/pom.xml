@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jdsnet.maven.lucee</groupId>
 		<artifactId>lucee-maven-plugin</artifactId>
-		<version>0.2.9</version>
+		<version>0.3.0</version>
 	</parent>
 	<artifactId>lar-webapp-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
@@ -35,6 +35,14 @@
 			<groupId>org.lucee</groupId>
 			<artifactId>lucee</artifactId>
 		</dependency>
+		<!-- <dependency>
+			<groupId>org.lucee</groupId>
+			<artifactId>core</artifactId>
+			<version>5.3.8.206</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/support/core.lco</systemPath>
+			<optional>true</optional>
+		</dependency> -->
 	</dependencies>
 	
 	<build>
