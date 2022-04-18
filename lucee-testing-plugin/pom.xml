@@ -5,7 +5,8 @@
 	<parent>
 		<groupId>org.jdsnet.maven.lucee</groupId>
 		<artifactId>lucee-maven-plugin</artifactId>
-		<version>0.2.7</version>
+		<version>0.3.0</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>lucee-testing-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
@@ -32,15 +33,16 @@
 			<version>3.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.maven.surefire</groupId>
-			<artifactId>common-java5</artifactId>
-			<version>2.22.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-resources-plugin</artifactId>
 			<version>2.7</version>
 			<type>maven-plugin</type>
+		</dependency>
+
+		<dependency>
+			<groupId>org.twdata.maven</groupId>
+			<artifactId>mojo-executor</artifactId>
+			<version>2.4.0</version>
 		</dependency>
 
 		<dependency>
@@ -82,6 +84,11 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.6</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.9</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -93,6 +100,5 @@
 			<artifactId>lucee-maven-support</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 	</dependencies>
 </project>

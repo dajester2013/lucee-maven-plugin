@@ -51,6 +51,12 @@
 			<groupId>org.lucee</groupId>
 			<artifactId>lucee</artifactId>
 		</dependency>
+
+		<!-- <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>lucee-testing-plugin</artifactId>
+			<version>${project.version}</version>
+		</dependency> -->
 	</dependencies>
 
 	<build>

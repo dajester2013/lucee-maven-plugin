@@ -1,0 +1,136 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jdsnet.maven.lucee</groupId>
+		<artifactId>lucee-maven-plugin</artifactId>
+		<version>0.3.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>lucee-testing-testbox</artifactId>
+	<packaging>lar</packaging>
+	<version>4.5.0</version>
+	
+	<properties>
+		<mockdatacfc.version>3.5.0</mockdatacfc.version>
+		<cbstreams.version>1.5.0</cbstreams.version>
+
+		<skipTests>true</skipTests>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>download-dependencies</id>
+						<phase>generate-sources</phase>
+						<goals><goal>run</goal></goals>
+						<configuration>
+							<target>
+								<echo message="Download TestBox" />
+
+								<delete	dir="${project.build.directory}/build" />
+
+								<mkdir	dir="${project.build.directory}/downloads" />
+								<mkdir	dir="${project.build.directory}/build" />
+
+								<get	src="https://downloads.ortussolutions.com/ortussolutions/testbox/${project.version}/testbox-${project.version}.zip" 
+										dest="${project.build.directory}/downloads/testbox.zip"
+										/>
+								<get	src="https://downloads.ortussolutions.com/ortussolutions/coldbox-modules/MockDataCFC/${mockdatacfc.version}/MockDataCFC-${mockdatacfc.version}.zip" 
+										dest="${project.build.directory}/downloads/mockdatacfc.zip"
+										/>
+								<get	src="https://downloads.ortussolutions.com/ortussolutions/coldbox-modules/cbstreams/${cbstreams.version}/cbstreams-${cbstreams.version}.zip" 
+										dest="${project.build.directory}/downloads/cbstreams.zip"
+										/>
+
+								<unzip	src="${project.build.directory}/downloads/testbox.zip"
+										dest="${project.build.directory}/build" />
+
+								<mkdir	dir="${project.build.directory}/build/testbox/system/modules/mockdatacfc" />
+								<mkdir	dir="${project.build.directory}/build/testbox/system/modules/cbstreams" />
+
+								<unzip	src="${project.build.directory}/downloads/mockdatacfc.zip"
+										dest="${project.build.directory}/build/testbox/system/modules/mockdatacfc" />
+								<unzip	src="${project.build.directory}/downloads/cbstreams.zip"
+										dest="${project.build.directory}/build/testbox/system/modules/cbstreams" />
+									
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.jdsnet.maven.lucee</groupId>
+				<artifactId>lar-maven-plugin</artifactId>
+				<version>${project.parent.version}</version>
+				<extensions>true</extensions>
+				
+				<configuration>
+					<verbose>true</verbose>
+
+					<larSourceDir>target/build/testbox</larSourceDir>
+					<larResourcesDir>target/build/testbox</larResourcesDir>
+					<filterResources>false</filterResources>
+
+					<excludes>
+						<exclude>build/**/*</exclude>
+						<exclude>tests/**/*</exclude>
+						<exclude>apidocs/**/*</exclude>
+						<exclude>*.xml</exclude>
+						<exclude>*.json</exclude>
+						<exclude>.*</exclude>
+						<exclude>.*/**</exclude>
+					</excludes>
+					<excludesResources>
+						<excludesResource>build/**/*</excludesResource>
+						<excludesResource>tests/**/*</excludesResource>
+						<excludesResource>apidocs/**/*</excludesResource>
+						<excludesResource>*.xml</excludesResource>
+						<excludesResource>*.json</excludesResource>
+						<excludesResource>.*</excludesResource>
+						<excludesResource>.*/**</excludesResource>
+					</excludesResources>
+
+					<larType>mapping</larType>
+					<larVirtualPath>/testbox</larVirtualPath>
+				</configuration>
+
+				<dependencies>
+					<dependency>
+						<groupId>org.lucee</groupId>
+						<artifactId>lucee</artifactId>
+						<version>5.3.9.120-SNAPSHOT</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			
+		</plugins>
+	</build>
+	<repositories>
+        <repository>
+            <id>isg</id>
+            <url>http://artifactsiss.internal/repository/isg/</url>
+        </repository>
+    </repositories>
+	<pluginRepositories>
+        <pluginRepository>
+            <id>maven-public</id>
+            <url>http://artifacts.iss.internal/repository/maven-public/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>isg-snapshot</id>
+            <url>http://artifacts.iss.internal/repository/isg-snapshot/</url>
+        </pluginRepository>
+		<pluginRepository>
+			<id>dajester2013</id>
+			<url>https://dajester2013.github.io/maven-releases/</url>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>lco-maven-plugin</name>
+	<name>lucee-testing-plugin</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -22,7 +22,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1624285120064</id>
+			<id>1649775420993</id>
 			<name></name>
 			<type>30</type>
 			<matcher>
