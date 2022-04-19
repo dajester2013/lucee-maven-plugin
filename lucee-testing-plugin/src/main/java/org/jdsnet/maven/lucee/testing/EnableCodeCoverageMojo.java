@@ -55,7 +55,14 @@ public class EnableCodeCoverageMojo extends CommonTestConfigMojo {
 			}
 
 			getLog().info("Adding FusionReactor JavaAgent to project...");
-			FileUtils.write(jvmConf, " -javaagent:"+frJar.getAbsolutePath()+"=name=test,address=10011 ", "UTF-8", true);
+			
+			String conf = "";
+			
+			if (jvmConf.exists())
+				conf = FileUtils.readFileToString(jvmConf, "UTF-8");
+			
+			if (!conf.matches(".*-javaagent:[^\\s]+fusionreactor.*"))
+				FileUtils.write(jvmConf, " -javaagent:"+frJar.getAbsolutePath()+"=name=test,address=10011 ", "UTF-8", true);
 		} catch(IOException | InterruptedException e) {
 			throw new MojoExecutionException(e, "Error downloading fusionreactor", "");
 		}

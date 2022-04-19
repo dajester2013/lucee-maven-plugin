@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jdsnet.maven.lucee</groupId>
 	<artifactId>lucee-maven-plugin</artifactId>
-	<version>0.3.0</version>
+	<version>0.4.0</version>
 	<packaging>pom</packaging>
 	<name>Lucee Maven Plugins</name>
 	<url>http://github.com/dajester2013/lucee-maven-plugin</url>
@@ -44,7 +44,7 @@
 		<module>lucee-maven-support</module>
 		<module>lar-webapp-plugin</module>
 		<module>lucee-testing-plugin</module>
-		<module>lucee-testing-testbox</module>
+		<!-- <module>lucee-testing-testbox</module> -->
 	</modules>
 	<dependencies>
 		<dependency>
