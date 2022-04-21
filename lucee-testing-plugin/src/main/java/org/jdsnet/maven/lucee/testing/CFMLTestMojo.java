@@ -14,7 +14,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jdsnet.maven.lucee.lar.util.CompileTimeMapping;
-import org.jdsnet.maven.lucee.testing.util.Executor;
+import org.jdsnet.maven.lucee.testing.util.TestExecutor;
 import org.jdsnet.maven.lucee.testing.util.TestRun;
 
 @Mojo(
@@ -77,7 +77,7 @@ public class CFMLTestMojo extends CommonTestConfigMojo {
 		if (labels.size() > 0)
 			run.setLabels(labels);
 
-		Executor.execute(run);
+		TestExecutor.execute(run);
 	}
 
 }

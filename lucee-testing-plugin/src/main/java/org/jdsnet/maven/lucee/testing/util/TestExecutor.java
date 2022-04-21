@@ -26,7 +26,7 @@ import org.jdsnet.maven.lucee.util.LuceeConfiguration.Mapping;
 import lucee.loader.engine.CFMLEngineFactory;
 import lucee.loader.servlet.CFMLServlet;
 
-public class Executor {
+public class TestExecutor {
 	
 	public static boolean execute(TestRun testRun) throws MojoExecutionException, MojoFailureException {
 		try {
@@ -74,7 +74,7 @@ public class Executor {
 	}
 
 	private static void configureClassPath(TestRun testRun) {
-		ClassRealm cl = (ClassRealm) Executor.class.getClassLoader();
+		ClassRealm cl = (ClassRealm) TestExecutor.class.getClassLoader();
 
 		testRun.project.getArtifacts().stream()
 			.filter(a ->a.getType().equals("jar"))
@@ -92,7 +92,7 @@ public class Executor {
 		URL res;
 		File outFile;
 		
-		res = Executor.class.getResource("/test-runner.cfm");
+		res = TestExecutor.class.getResource("/test-runner.cfm");
 		outFile = new File(testRun.testRuntimeDir, "test-runner.cfm");
 		if (outFile.exists()) outFile.delete();
 			FileUtils.copyURLToFile(res, outFile);
