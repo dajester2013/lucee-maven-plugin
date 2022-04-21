@@ -6,6 +6,13 @@
 	"configurations": [
 		{
 			"type": "java",
+			"name": "Launch TestRun$TestBundle",
+			"request": "launch",
+			"mainClass": "org.jdsnet.maven.lucee.testing.util.TestRun$TestBundle",
+			"projectName": "lucee-testing-plugin"
+		},
+		{
+			"type": "java",
 			"name": "Remote Debug 8000",
 			"request": "attach",
 			"hostName": "localhost",

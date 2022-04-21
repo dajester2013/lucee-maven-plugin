@@ -100,5 +100,11 @@
 			<artifactId>lucee-maven-support</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.github.cfparser</groupId>
+			<artifactId>cfml.parsing</artifactId>
+			<version>2.11.0</version>
+		</dependency>
 	</dependencies>
 </project>

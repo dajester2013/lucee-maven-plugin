@@ -8,8 +8,8 @@ import org.jdsnet.maven.lucee.lar.AbstractLarMojo;
 public abstract class CommonTestConfigMojo extends AbstractLarMojo {
 
 
-	@Parameter(defaultValue="${project.build.directory}/cfml-test-reports")
-	private File resultFolder;
+	@Parameter(defaultValue="${project.build.directory}/test-reports")
+	private File reportsDirectory;
 
 	@Parameter(defaultValue="src/main/cfml")
 	private File cfmlSourceDirectory;
@@ -40,8 +40,8 @@ public abstract class CommonTestConfigMojo extends AbstractLarMojo {
 	@Parameter(defaultValue="1.5.0")
 	private String cbstreamsVersion;
 	
-	protected File getResultFolder() {
-		return resultFolder;
+	protected File getReportsDirectory() {
+		return reportsDirectory;
 	}
 
 	protected File getTestsDirectory() {
