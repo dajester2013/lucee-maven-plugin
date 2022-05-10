@@ -58,6 +58,14 @@ public class CFMLTestMojo extends CommonTestConfigMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		if (this.isSkipTests()) {
+			getLog().info("Lucee tests have been skipped.");
+			return;
+		} else if (!getTestsDirectory().exists()) {
+			getLog().info("No CFML tests to run.");
+			return;
+		}
+
 		TestRun run = new TestRun(project, getLog())
 			.luceeRuntime(luceeRuntimeDirectory)
 			.testRuntime(getTestboxDirectory())

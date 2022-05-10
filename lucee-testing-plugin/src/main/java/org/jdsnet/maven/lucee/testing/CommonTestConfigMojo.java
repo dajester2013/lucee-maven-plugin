@@ -20,8 +20,8 @@ public abstract class CommonTestConfigMojo extends AbstractLarMojo {
 	@Parameter(defaultValue="false", property="skipTests")
 	private boolean skipTests;
 
-	@Parameter(defaultValue="false", property="maven.test.skip")
-	private boolean skip;
+	@Parameter(defaultValue="false", property="skipCFMLTests")
+	private boolean skipCFMLTests;
 
 	@Parameter(defaultValue="false", property="maven.test.failure.ignore")
 	private boolean testFailureIgnore;
@@ -49,11 +49,7 @@ public abstract class CommonTestConfigMojo extends AbstractLarMojo {
 	}
 
 	protected boolean isSkipTests() {
-		return skipTests;
-	}
-
-	protected boolean isSkip() {
-		return skip;
+		return skipTests || skipCFMLTests;
 	}
 
 	protected boolean isTestFailureIgnore() {

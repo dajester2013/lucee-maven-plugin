@@ -1,6 +1,6 @@
 <cfscript>
 	try {
-		server.password = "testing";
+		server.password = "password";
 		cfadmin(type="web",		action="updatePassword", newPassword="#server.password#");
 		cfadmin(type="server",	action="updatePassword", newPassword="#server.password#");
 
@@ -111,6 +111,18 @@
 		cfheader(
 			name="x-test-result-status", 
 			value="#results.getTotalError() ? -1 : (results.getTotalFail() ? 0 : 1)#"
+		);
+		cfheader(
+			name="x-test-num-bundles", 
+			value="#results.getTotalBundles()#"
+		);
+		cfheader(
+			name="x-test-num-suites", 
+			value="#results.getTotalSuites()#"
+		);
+		cfheader(
+			name="x-test-num-specs", 
+			value="#results.getTotalSpecs()#"
 		);
 	}
 </cfscript>
