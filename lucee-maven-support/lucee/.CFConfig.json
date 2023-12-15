@@ -1,0 +1,31 @@
+{
+  "componentMappings" : [ {
+    "archive" : null,
+    "physical" : "{lucee-config}/jar/vis",
+    "virtual" : "/jar/vis",
+    "primary" : "physical",
+    "readonly" : "yes",
+    "hidden" : "false",
+    "toplevel" : "true",
+    "trusted" : "true",
+    "listenerMode" : null,
+    "listenerType" : null,
+    "inspectTemplate" : null
+  } ],
+  "mappings" : {
+    "/jar/vis" : {
+      "archive" : null,
+      "physical" : "{lucee-config}/jar/vis",
+      "virtual" : "/jar/vis",
+      "primary" : "physical",
+      "readonly" : "yes",
+      "hidden" : "false",
+      "toplevel" : "true",
+      "trusted" : "true",
+      "listenerMode" : null,
+      "listenerType" : null,
+      "inspectTemplate" : null
+    }
+  },
+  "version" : "5.0"
+}

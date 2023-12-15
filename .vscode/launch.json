@@ -6,9 +6,31 @@
 	"configurations": [
 		{
 			"type": "java",
+			"name": "LuceeConfigManager",
+			"request": "launch",
+			"mainClass": "org.jdsnet.maven.lucee.util.LuceeConfigManager",
+			"projectName": "lucee-maven-support"
+		},
+		{
+			"type": "java",
+			"name": "XMLLuceeConfiguration",
+			"request": "launch",
+			"mainClass": "org.jdsnet.maven.lucee.util.XMLLuceeConfiguration",
+			"projectName": "lucee-maven-support"
+		},
+		{
+			"type": "java",
+			"name": "LuceeConfiguration",
+			"request": "launch",
+			"mainClass": "org.jdsnet.maven.lucee.util.LuceeConfiguration",
+			"projectName": "lucee-maven-support"
+		},
+		{
+			"type": "java",
 			"name": "Debug - attach 8000",
 			"request": "attach",
 			"hostName": "localhost",
+			"projectName": "lucee-maven-plugin",
 			"port": 8000
 		}
 	]

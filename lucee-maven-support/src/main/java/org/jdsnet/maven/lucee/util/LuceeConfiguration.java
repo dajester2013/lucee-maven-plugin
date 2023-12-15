@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,12 +21,22 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.osgi.framework.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.squark.nestedjarclassloader.NestedJarURLConnection;
+
+/**
+ * @see LuceeConfigManager 
+ */
+@Deprecated
 public class LuceeConfiguration {
 	
 	public static final class Mapping {
@@ -48,16 +56,14 @@ public class LuceeConfiguration {
 		}
 
 		public Mapping(String source, String virtual, String primary) {
+			this.virtual = virtual;
+			this.primary = primary;
 			if (primary.equals("archive")) {
 				this.archive = source;
 				this.physical = null;
-				this.virtual = virtual;
-				this.primary = primary;
 			} else {
 				this.archive = null;
 				this.physical = source;
-				this.virtual = virtual;
-				this.primary = primary;
 			}
 		}
 		
@@ -104,8 +110,12 @@ public class LuceeConfiguration {
 
 	}
 	
+	private static final Version LUCEE_VERSION = lucee.VersionInfo.getIntVersion();
+
 	File configDest;
 	Document config;
+
+	ObjectMapper o = new ObjectMapper();
 
 	public LuceeConfiguration(File dest) throws IOException, MojoExecutionException {
 		this(dest, null);
@@ -135,29 +145,16 @@ public class LuceeConfiguration {
 		} else {
 			boolean written = false;
 			
-			InputStream s = LuceeConfiguration.class.getClassLoader().getResourceAsStream("core/core.lco");
-			
-			if (s != null) {
-				ZipInputStream zin = new ZipInputStream(s);
-				
-				ZipEntry e;
-				while ((e = zin.getNextEntry()) != null) {
-					if (e.getName().equals("resource/config/web.xml")) {
-						FileOutputStream configOut = new FileOutputStream(dest);
-
-						byte[] buf = new byte[4096];
-						int len;
-						while ((len = zin.read(buf)) != -1) {
-							configOut.write(buf, 0, len);
-						}
-
-						configOut.close();
-						written = true;
-						break;
-					}
+			URL lco = LuceeConfiguration.class.getClassLoader().getResource("core/core.lco");
+			if (lco != null) {
+				URL webx = new URL(lco, "core.lco!/resource/config/web.xml");	
+				try (
+					NestedJarURLConnection webxNJURL=new NestedJarURLConnection(webx, false, false);
+					FileOutputStream configOut = new FileOutputStream(dest);
+				) {
+					IOUtils.copy(webxNJURL.getInputStream(), configOut);
+					written = true;
 				}
-				
-				zin.close();
 			}
 			
 			if (!written) {

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jdsnet.maven.lucee</groupId>
 	<artifactId>lucee-maven-plugin</artifactId>
-	<version>0.4.0</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<name>Lucee Maven Plugins</name>
 	<url>http://github.com/dajester2013/lucee-maven-plugin</url>
@@ -23,15 +23,15 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.4</version>
+					<version>3.10.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.8.0</version>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
+						<source>11</source>
+						<target>11</target>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -60,39 +60,39 @@
 			<dependency>
 				<groupId>org.lucee</groupId>
 				<artifactId>lucee</artifactId>
-				<version>5.3.8.206</version>
+				<version>6.0.0.585</version>
 			</dependency>
 
 
 			<dependency>
 				<groupId>org.apache.tomcat.embed</groupId>
 				<artifactId>tomcat-embed-core</artifactId>
-				<version>[8.5.40,8.6)</version>
+				<version>9.0.84</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat.embed</groupId>
 				<artifactId>tomcat-embed-logging-juli</artifactId>
-				<version>[8.5.40,8.6)</version>
+				<version>9.0.0.M6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat.embed</groupId>
 				<artifactId>tomcat-embed-jasper</artifactId>
-				<version>[8.5.40,8.6)</version>
+				<version>9.0.84</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-jasper</artifactId>
-				<version>[8.5.40,8.6)</version>
+				<version>9.0.84</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-jasper-el</artifactId>
-				<version>[8.5.40,8.6)</version>
+				<version>9.0.84</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-jsp-api</artifactId>
-				<version>[8.5.40,8.6)</version>
+				<version>9.0.84</version>
 			</dependency>
 
 		</dependencies>

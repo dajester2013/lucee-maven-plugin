@@ -4,8 +4,8 @@
 	<parent>
 		<groupId>org.jdsnet.maven.lucee</groupId>
 		<artifactId>lucee-maven-plugin</artifactId>
-		<version>0.4.0</version>
-		<relativePath>..</relativePath>
+		<version>1.0.0</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>Lucee Extension Maven Plugin</name>
 	<packaging>maven-plugin</packaging>
@@ -14,12 +14,12 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>3.0</version>
+			<version>3.9.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
-			<version>3.4</version>
+			<version>3.10.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jdsnet.maven.lucee</groupId>
@@ -36,12 +36,12 @@
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-shade-plugin</artifactId>
-			<version>2.4.3</version>
+			<version>3.5.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
+			<version>1.16.0</version>
 		</dependency>
 	</dependencies>
 </project>
