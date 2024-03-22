@@ -2,9 +2,13 @@ package org.jdsnet.maven.lucee.webapp;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -20,6 +24,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jdsnet.maven.lucee.util.LuceeConfigManager;
+import org.jdsnet.maven.lucee.util.LuceeConfigManager.ConfigFormat;
+import org.jdsnet.maven.lucee.util.LuceeConfigManager.ConfigLevel;
 import org.osgi.framework.Version;
 
 @Mojo(
@@ -29,7 +35,7 @@ import org.osgi.framework.Version;
 	requiresDependencyResolution = ResolutionScope.TEST
 )
 public class AttachDependenciesMojo extends AbstractMojo {
-	private static final Version LUCEE_VERSION = lucee.VersionInfo.getIntVersion();
+	private Version luceeVersion = lucee.VersionInfo.getIntVersion();
 
 	@Parameter(defaultValue = "src/main/webapp", required = true)
 	private File warSourceDirectory;
@@ -61,7 +67,8 @@ public class AttachDependenciesMojo extends AbstractMojo {
 	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		getLog().info("Lucee Version: " + LUCEE_VERSION);
+		findLuceeVersion();
+
 		try {
 			initConfig();
 
@@ -104,17 +111,36 @@ public class AttachDependenciesMojo extends AbstractMojo {
 		}
 	}
 
+	private void findLuceeVersion() throws MojoExecutionException {
+		getLog().info("Plugin Lucee Version: "+luceeVersion);
+		Optional<Artifact> luceeDep = project.getArtifacts().stream()
+				.filter(artifact -> (
+					artifact.getGroupId().equals("org.lucee") && artifact.getArtifactId().equals("lucee")
+				))
+				.findFirst();
+		
+		if (luceeDep.isPresent()) try (
+			URLClassLoader ucl = new URLClassLoader(new URL[] {luceeDep.get().getFile().toURI().toURL()});
+		) {			
+			String v = new String(ucl.getResourceAsStream("lucee/version").readAllBytes(),"UTF-8");
+			v=v.substring(0,v.indexOf(":"));
+			luceeVersion = Version.parseVersion(v);
+		} catch(Exception e) {
+			throw new MojoExecutionException(e);
+		}
+		getLog().info("Target Lucee Version: "+luceeVersion);
+	}
+
 	private void initConfig() throws IOException {
 		File configDst=null;
 
 		// a config file is specified.
 		if (luceeConfigSource != null && luceeConfigSource.exists()) {
-			getLog().info(luceeConfigSource.toString());
-			// Path srcCfgRelative = luceeConfigSource.toPath().relativize(warSourceDirectory.toPath());
+			Path srcCfgRelative = warSourceDirectory.toPath().relativize(luceeConfigSource.toPath());
 			
-			// configDst = new File(webappBuildDirectory, srcCfgRelative.toString());
+			configDst = new File(webappBuildDirectory, srcCfgRelative.toString());
 
-			// FileUtils.copyFile(configDst, configDst);
+			FileUtils.copyFile(luceeConfigSource, configDst);
 
 		// no explicit config file specified - try to discover in war source.
 		} else {
@@ -144,8 +170,19 @@ public class AttachDependenciesMojo extends AbstractMojo {
 		if (configDst == null) {
 			configDst = webappBuildDirectory;
 			if (!configDst.exists()) configDst.mkdirs();
+
+			if (luceeVersion.getMajor() >= 6) {
+				File dcf = ConfigFormat.JSON.getDefaultFile(ConfigLevel.SERVER);
+
+				configManager = new LuceeConfigManager(ConfigLevel.SERVER, ConfigFormat.JSON, new File(configDst, dcf.toString()));
+			} else {
+				File dcf = ConfigFormat.XML.getDefaultFile(ConfigLevel.WEB);
+
+				configManager = new LuceeConfigManager(ConfigLevel.WEB, ConfigFormat.XML, new File(configDst, dcf.toString()));
+			} 
+		} else {
+			configManager = new LuceeConfigManager(configDst);
 		}
 
-		configManager = new LuceeConfigManager(configDst);
 	}
 }
