@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -30,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-import com.google.common.io.Files;
 
 import io.squark.nestedjarclassloader.NestedJarURLConnection;
 
@@ -324,7 +325,7 @@ public class LuceeConfigManager {
 					destBase = cmpDir;
 				else if (itemPath.startsWith("archives"))
 					// archives have a custom install, but must exist on disk.
-					destBase = Files.createTempDir();
+					destBase = Files.createTempDirectory("").toFile();
 				else if (itemPath.startsWith("context"))
 					destBase = ctxDir;
 				else if (itemPath.startsWith("configs"))
@@ -350,7 +351,11 @@ public class LuceeConfigManager {
 					if (itemPath.endsWith(".lar")) {
 						installLar(dest);
 						// was extracted to a temp dir, delete temp dir.
-						FileUtils.deleteDirectory(destBase);
+						try {
+							FileUtils.forceDeleteOnExit(destBase);
+						} catch(IOException e) {
+							log.warn("Error cleaning up temp directory "+destBase.toString());
+						}
 					}
 				}
 
