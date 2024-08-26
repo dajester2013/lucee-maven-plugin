@@ -67,7 +67,7 @@
 			<dependency>
 				<groupId>org.apache.tomcat.embed</groupId>
 				<artifactId>tomcat-embed-core</artifactId>
-				<version>9.0.84</version>
+				<version>9.0.90</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat.embed</groupId>
@@ -77,22 +77,22 @@
 			<dependency>
 				<groupId>org.apache.tomcat.embed</groupId>
 				<artifactId>tomcat-embed-jasper</artifactId>
-				<version>9.0.84</version>
+				<version>9.0.90</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-jasper</artifactId>
-				<version>9.0.84</version>
+				<version>9.0.90</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-jasper-el</artifactId>
-				<version>9.0.84</version>
+				<version>9.0.90</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-jsp-api</artifactId>
-				<version>9.0.84</version>
+				<version>9.0.90</version>
 			</dependency>
 
 		</dependencies>
