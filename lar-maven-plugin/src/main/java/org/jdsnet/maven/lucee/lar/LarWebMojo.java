@@ -124,6 +124,9 @@ public class LarWebMojo extends AbstractLarMojo {
 			
 			tc.setBaseDir(larOutputDirectory.getAbsolutePath());
 			tc.setPort(port);
+			tc.getConnector().setProperty("address", "127.0.0.1");
+
+			getLog().info(tc.getConnector().toString());
 			
 			Context ctx = tc.addContext("/lar", webroot.getAbsolutePath());
 			
